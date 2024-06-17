@@ -5,7 +5,7 @@ public class Calculator {
      * @param b the second Integer to be added
      * @return the sum of a and b
      */
-    public static int add(int a, int b) {
+    public static int add(int  a, int b) {
         return a + b;
     }
 }
