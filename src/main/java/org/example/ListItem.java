@@ -4,17 +4,16 @@ public class ListItem {
     public String name;
     public Boolean isTracked; //this is true by default
     public int timeFrame;
+    public int maxProgress;
+    public int currentProgress;
+    public Checklist assignedList;
 
     /**
-     * Constructor for a list item
-     * @param name the name of the item to be used
-     * @param timeFrame the time frame in which to track this list item
+     * empty constructor
      */
-    /*public ListItem(String name, int timeFrame) {
-        this.isTracked = true;
-        this.name = name;
-        this.timeFrame = timeFrame;
-    }*/
+    public ListItem(){
+
+    }
 
     /**
      * deletes a list item (stub)
@@ -45,5 +44,59 @@ public class ListItem {
      */
     public void setIsTracked(Boolean isTracked) {
         this.isTracked = isTracked;
+    }
+
+    /**
+     * sets the goal amount per refresh time frame
+     * @param maxProgress the new goal amount
+     */
+    public void setMaxProgress(int maxProgress) {
+        this.maxProgress = maxProgress;
+    }
+
+    /**
+     * gets the maxProgress Value
+     * @return maxProgress
+     */
+    public int getMaxProgress() {
+        return maxProgress;
+    }
+
+    /**
+     * adds 1 to the currentProgress
+     */
+    public void addProgress() {
+        this.currentProgress += 1;
+    }
+
+    /**
+     * removes 1 from the currentProgress
+     */
+    public void reduceProgress() {
+        this.currentProgress -= 1;
+    }
+
+    /**
+     * gets the currentProgress
+     * @return currentProgress
+     */
+    public int getCurrentProgress() {
+        return currentProgress;
+    }
+
+    /**
+     * gets the timeFrame value
+     * @return timeFrame
+     */
+    public int getTimeFrame() {
+        return this.timeFrame;
+    }
+
+    /**
+     * assigns the checklist to this list item
+     * @param checklist the given checklist to be assigned
+     */
+    public void setAssignedList(Checklist checklist) {
+        this.assignedList = checklist;
     }
 }
