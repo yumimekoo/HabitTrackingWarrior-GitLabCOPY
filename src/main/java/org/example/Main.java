@@ -1,16 +1,15 @@
 package org.example;
+import java.util.ArrayList;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public String main(String[] args) {
-        if(isLarger(5, 3))
-            return "yup, it's larger";
-        return null;
-    }
+    public static void main(String[] args) {
 
-    public boolean isLarger(int x, int y) {
-        return x > y;
+        ArrayList<Checklist> lists = new ArrayList<>();
+        Checklist checklist1 = new Checklist("daily", 1);
+        lists.add(checklist1);
+
+        Goal g1 = new Goal("drink less coffee", 1, 1, 0,true, lists);
+
     }
 }
 

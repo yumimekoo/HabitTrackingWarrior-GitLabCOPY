@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Checklist {
     private String name;
     private int refreshTime;
-    private ArrayList<ListItem> ListItems;
+    private ArrayList<ListItem> listItems;
 
     /**
      * Constructor for Checklist
@@ -34,11 +34,19 @@ public class Checklist {
     }
 
     /**
+     * gets the Checklists refreshTime
+     * @return the lists refreshTime
+     */
+    public int getRefreshTime(){
+        return this.refreshTime;
+    }
+
+    /**
      * adds a list item to the checklist
      * @param item the added list item
      */
     public void addListItem(ListItem item){
-        this.ListItems.add(item);
+        this.listItems.add(item);
         item.setAssignedList(this);
     }
 
@@ -47,8 +55,8 @@ public class Checklist {
      * @param item the list item to be removed
      */
     public void removeListItem(ListItem item){
-        this.ListItems.remove(item);
-        item.setAssignedList(null);
+        this.listItems.remove(item);
+        item.resetAssignedList();
     }
 
     /**
@@ -56,7 +64,7 @@ public class Checklist {
      * @return returns this checklist's ArrayList
      */
     public ArrayList<ListItem> getList(){
-        return this.ListItems;
+        return this.listItems;
     }
 
     /**

@@ -1,4 +1,5 @@
 package org.example;
+import java.util.ArrayList;
 
 public class ListItem {
     public String name;
@@ -42,8 +43,14 @@ public class ListItem {
      * sets whether the list item is being tracked or not
      * @param isTracked the new value for this.isTracked
      */
-    public void setIsTracked(Boolean isTracked) {
+    public void setIsTracked(Boolean isTracked, ArrayList<Checklist> lists) {
         this.isTracked = isTracked;
+
+        if(this.isTracked) {
+            this.assignListByTimeFrame(timeFrame, lists);
+        } else {
+            this.resetAssignedList();
+        }
     }
 
     /**
@@ -97,6 +104,32 @@ public class ListItem {
      * @param checklist the given checklist to be assigned
      */
     public void setAssignedList(Checklist checklist) {
-        this.assignedList = checklist;
+        checklist.addListItem(this);
+    }
+
+    /**
+     * "resets" the assigned list and sets the value tu null
+     */
+    public void resetAssignedList(){
+        this.assignedList = null;
+    }
+
+
+    public void assignListByTimeFrame(int timeFrame, ArrayList<Checklist> lists) {
+        for (int i = 0; i <= lists.size(); i++) {
+            if (timeFrame == lists.get(i).getRefreshTime()) {
+                setAssignedList(lists.get(i));
+                break;
+            }
+        }
+        if (this.assignedList == null) {
+            this.isTracked = false;
+            System.out.println("There exists no list with a suitable time frame");
+        }
+
+    }
+
+    public Checklist getAssignedList() {
+        return this.assignedList;
     }
 }

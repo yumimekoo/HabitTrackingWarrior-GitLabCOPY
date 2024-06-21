@@ -1,7 +1,7 @@
 package org.example;
 
 public class Habit extends ListItem{
-    private int habitTrackType;
+    private int habitTrackType; //for now always zero
 
     /**
      * Constructor for habits
