@@ -2,6 +2,7 @@ package org.example;
 import java.util.ArrayList;
 
 public class ListItem {
+    // THESE NEED TO BE CHANGED TO PRIVATE AND HAVE GETTERS/SETTERS ADDED
     public String name;
     public Boolean isTracked; //this is true by default
     public int timeFrame;
@@ -41,15 +42,38 @@ public class ListItem {
 
     /**
      * sets whether the list item is being tracked or not
+     * if isTracked is true, it uses the assignListByTimeFrame method
+     * if not, it checks if it has an assigned list, if it has, assignedList is set to null
      * @param isTracked the new value for this.isTracked
      */
     public void setIsTracked(Boolean isTracked, ArrayList<Checklist> lists) {
         this.isTracked = isTracked;
 
         if(this.isTracked) {
-            this.assignListByTimeFrame(timeFrame, lists);
-        } else {
+            this.assignListByTimeFrame(this.timeFrame, lists);
+        } else if (this.assignedList != null) {
             this.resetAssignedList();
+        }
+    }
+
+    /**
+     * assigns a Checklist to a ListItem based on it's timeFrame
+     * if there is no Checklist that has a matching refreshTime, isTracked will be set to false
+     * @param timeFrame the time frame in which the ListItem is supposed to be tracked in
+     * @param lists the ArrayList of Checklists the method uses to search for a suitable Checklist
+     */
+    public void assignListByTimeFrame(int timeFrame, ArrayList<Checklist> lists) {
+        for (Checklist list : lists) {
+            if (timeFrame == list.getRefreshTime()) {
+                this.setAssignedList(list);
+                break;
+            }
+        }
+        if (this.assignedList == null) {
+            this.isTracked = false;
+            System.out.print("There exists no list with a suitable time frame (");
+            System.out.print(this.getName());
+            System.out.println(")");
         }
     }
 
@@ -105,31 +129,30 @@ public class ListItem {
      */
     public void setAssignedList(Checklist checklist) {
         checklist.addListItem(this);
+        this.assignedList = checklist;
     }
 
     /**
-     * "resets" the assigned list and sets the value tu null
+     * "resets" the assigned list, sets the value tu null and removes the list item from the Checklist's listItems Array
      */
     public void resetAssignedList(){
+        this.assignedList.removeListItem(this);
         this.assignedList = null;
     }
 
-
-    public void assignListByTimeFrame(int timeFrame, ArrayList<Checklist> lists) {
-        for (int i = 0; i <= lists.size(); i++) {
-            if (timeFrame == lists.get(i).getRefreshTime()) {
-                setAssignedList(lists.get(i));
-                break;
-            }
-        }
-        if (this.assignedList == null) {
-            this.isTracked = false;
-            System.out.println("There exists no list with a suitable time frame");
-        }
-
-    }
-
+    /**
+     * gets the ListItem's assigned list
+     * @return the assigned list
+     */
     public Checklist getAssignedList() {
         return this.assignedList;
+    }
+
+    /**
+     * gets the ListItem's name
+     * @return the name
+     */
+    public String getName(){
+        return this.name;
     }
 }

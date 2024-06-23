@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.ArrayList;
+
 public class Habit extends ListItem{
     private int habitTrackType; //for now always zero
 
@@ -10,12 +12,12 @@ public class Habit extends ListItem{
      * @param maxProgress how many checkboxes you have left in the given time frame
      * @param habitTrackType what kind of tracking is being used (e.g. checkbox/percentage bar/etc.)
      */
-    public Habit (String name, int timeFrame, int maxProgress, int habitTrackType) {
-        this.isTracked = true;
+    public Habit (String name, int timeFrame, int maxProgress, int habitTrackType, Boolean isTracked, ArrayList<Checklist> lists) {
         this.name = name;
         this.timeFrame = timeFrame;
         this.maxProgress = maxProgress;
         this.habitTrackType = habitTrackType;
+        setIsTracked(isTracked, lists);
     }
 
     /**
@@ -24,5 +26,26 @@ public class Habit extends ListItem{
      */
     public void setHabitTrackType(int habitTrackType) {
         this.habitTrackType = habitTrackType;
+    }
+
+    @Override
+    public String toString() {
+        String habitString = "";
+
+        habitString += this.getName();
+        habitString += ", ";
+        habitString += this.isTracked;
+        habitString += ", ";
+        habitString += this.timeFrame;
+        habitString += ", ";
+        habitString += this.maxProgress;
+        habitString += ", ";
+        habitString += this.currentProgress;
+        habitString += ", ";
+        habitString += this.assignedList.getName();
+        habitString += ", ";
+        habitString += this.habitTrackType;
+
+        return habitString;
     }
 }

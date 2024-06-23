@@ -15,6 +15,7 @@ public class Checklist {
     public Checklist(String name, int refreshTime) {
         this.name = name;
         this.refreshTime = refreshTime;
+        listItems = new ArrayList<>();
     }
 
     /**
@@ -23,6 +24,10 @@ public class Checklist {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     /**
@@ -47,7 +52,6 @@ public class Checklist {
      */
     public void addListItem(ListItem item){
         this.listItems.add(item);
-        item.setAssignedList(this);
     }
 
     /**
@@ -85,5 +89,24 @@ public class Checklist {
         if (0 < item.getCurrentProgress()) {
             item.reduceProgress();
         }
+    }
+
+    @Override
+    public String toString(){
+        String checklistString = "";
+
+        checklistString += this.name;
+        checklistString += ", ";
+        checklistString += this.refreshTime;
+        checklistString += ", {";
+        for(int i = 0; i < this.listItems.size(); i++) {
+            if(i > 0){
+                checklistString += ", ";
+            }
+            checklistString += this.listItems.get(i).getName();
+        }
+        checklistString += "}";
+
+        return checklistString;
     }
 }
