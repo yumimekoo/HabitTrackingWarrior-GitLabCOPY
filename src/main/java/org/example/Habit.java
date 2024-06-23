@@ -28,6 +28,10 @@ public class Habit extends ListItem{
         this.habitTrackType = habitTrackType;
     }
 
+    /**
+     * toString method for Habit Objects
+     * @return the Habit's name, time frame, max/current progress, assigned Checklist, the track type and if it's tracked or not
+     */
     @Override
     public String toString() {
         String habitString = "";

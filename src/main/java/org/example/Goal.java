@@ -27,6 +27,10 @@ public class Goal extends ListItem{
         this.goalTrackType = goalTrackType;
     }
 
+    /**
+     * toString method for Goal Objects
+     * @return the Goal's name, time frame, max/current progress, assigned Checklist, the track type and if it's tracked or not
+     */
     @Override
     public String toString() {
         String goalString = "";

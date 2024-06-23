@@ -91,6 +91,10 @@ public class Checklist {
         }
     }
 
+    /**
+     * toString method for Checklist Objects
+     * @return Checklists name, refresh time, and every ListItem in the listItems Array
+     */
     @Override
     public String toString(){
         String checklistString = "";
