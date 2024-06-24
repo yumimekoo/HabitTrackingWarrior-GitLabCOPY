@@ -45,6 +45,11 @@ public class Main {
 
     }
 
+    /**
+     * reads the data of a given String and adds them as Checklists to the given ListPage ArrayList
+     * @param listPage the ListPage that the Checklists are being added to
+     * @param checklistData the String data
+     */
     public static void checklistReader(ListPage listPage, String checklistData) {
         String tempChecklistString = "";
 
@@ -58,6 +63,12 @@ public class Main {
         }
     }
 
+    /**
+     + reads the data of a given String and adds them as ListItems to the given ItemPage
+     * @param listPage the ListPage to search for Checklists, when creating a ListItem
+     * @param itemPage the ItemPage to add the ListItem to
+     * @param listItemData the given String data
+     */
     private static void listItemReader(ListPage listPage, ItemPage itemPage, String listItemData) {
         String tempListItemString = "";
 
@@ -71,6 +82,11 @@ public class Main {
         }
     }
 
+    /**
+     * assembles a Checklist from a given String
+     * @param checklistString the given String data
+     * @return the output Checklist
+     */
     public static Checklist stringToChecklist(String checklistString) {
         String name = "";
         String tempRefreshTime = "";
@@ -92,6 +108,13 @@ public class Main {
         return new Checklist(name, refresh);
     }
 
+    /**
+     * assembles a ListItem from a given String
+     * @param listItemString the given String data
+     * @param listPage the ListPage to look for Checklists when creating the ListItem
+     * @param itemPage the ItemPage the ListItem is added to, when created
+     * @return the output ListItem
+     */
     public static ListItem stringToListItem(String listItemString, ListPage listPage, ItemPage itemPage) {
         String name = "";
         String tempIsTracKed = "";
@@ -177,10 +200,20 @@ public class Main {
         return habit;
     }
 
+    /**
+     * converts a given String into a Boolean signal
+     * @param string the given String
+     * @return the output Boolean signal
+     */
     public static Boolean stringToBoolean(String string) {
         return string.equals("true");
     }
 
+    /**
+     * converts a given String into an Integer
+     * @param string the given String
+     * @return the output Integer
+     */
     public static int stringToInt(String string) {
         int converted = 0;
         for (int i = 0; i < string.length(); i++) {

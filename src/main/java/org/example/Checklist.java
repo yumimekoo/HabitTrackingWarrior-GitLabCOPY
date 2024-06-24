@@ -26,6 +26,10 @@ public class Checklist {
         this.name = name;
     }
 
+    /**
+     * gets the name of the give Checklist
+     * @return the checklist's name
+     */
     public String getName() {
         return this.name;
     }

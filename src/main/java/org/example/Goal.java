@@ -12,13 +12,13 @@ public class Goal extends ListItem{
      * @param goalTrackType what kind of tracking is being used (e.g. checkbox/percentage bar/etc.)
      */
     public Goal (String name, int timeFrame, int maxProgress, int goalTrackType, Boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage) {
-        this.name = name;
-        this.timeFrame = timeFrame;
-        this.maxProgress = maxProgress;
+        this.setName(name);
+        this.setTimeFrame(timeFrame);
+        this.setMaxProgress(maxProgress);
         this.goalTrackType = goalTrackType;
-        setIsTracked(isTracked, lists);
+        this.setIsTracked(isTracked, lists);
+        this.setIsGoal(true);
         itemPage.addItem(this);
-        isGoal = true;
     }
 
     /**
@@ -39,17 +39,17 @@ public class Goal extends ListItem{
 
         goalString += this.getName();
         goalString += ",";
-        goalString += this.isTracked;
+        goalString += this.getIsTracked();
         goalString += ",";
-        goalString += this.timeFrame;
+        goalString += this.getTimeFrame();
         goalString += ",";
-        goalString += this.maxProgress;
+        goalString += this.getMaxProgress();
         goalString += ",";
-        goalString += this.currentProgress;
+        goalString += this.getCurrentProgress();
         goalString += ",";
         goalString += this.goalTrackType;
         goalString += ",";
-        goalString += this.isGoal;
+        goalString += this.getIsGoal();
         goalString += ";";
 
         return goalString;

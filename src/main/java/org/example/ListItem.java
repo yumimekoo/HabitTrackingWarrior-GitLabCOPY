@@ -2,14 +2,13 @@ package org.example;
 import java.util.ArrayList;
 
 public class ListItem {
-    // THESE NEED TO BE CHANGED TO PRIVATE AND HAVE GETTERS/SETTERS ADDED
-    public String name;
-    public Boolean isTracked; //this is true by default
-    public int timeFrame;
-    public int maxProgress;
-    public int currentProgress;
-    public Checklist assignedList;
-    public Boolean isGoal;
+    private String name;
+    private Boolean isTracked; //this is true by default
+    private int timeFrame;
+    private int maxProgress;
+    private int currentProgress;
+    private Checklist assignedList;
+    private Boolean isGoal;
 
     /**
      * empty constructor
@@ -55,6 +54,10 @@ public class ListItem {
         } else if (this.assignedList != null) {
             this.resetAssignedList();
         }
+    }
+
+    public Boolean getIsTracked(){
+        return this.isTracked;
     }
 
     /**
@@ -155,5 +158,21 @@ public class ListItem {
      */
     public String getName(){
         return this.name;
+    }
+
+    /**
+     * sets if the ListItem is being tracked or not
+     * @param isGoal the new value
+     */
+    public void setIsGoal(Boolean isGoal) {
+        this.isGoal = isGoal;
+    }
+
+    /**
+     * gets if the ListItem is being Tracked or not
+     * @return the isTracked value
+     */
+    public Boolean getIsGoal() {
+        return this.isGoal;
     }
 }

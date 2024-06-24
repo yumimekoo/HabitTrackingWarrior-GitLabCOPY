@@ -12,13 +12,13 @@ public class Habit extends ListItem{
      * @param habitTrackType what kind of tracking is being used (e.g. checkbox/percentage bar/etc.)
      */
     public Habit (String name, int timeFrame, int maxProgress, int habitTrackType, Boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage) {
-        this.name = name;
-        this.timeFrame = timeFrame;
-        this.maxProgress = maxProgress;
+        this.setName(name);
+        this.setTimeFrame(timeFrame);
+        this.setMaxProgress(maxProgress);
         this.habitTrackType = habitTrackType;
         setIsTracked(isTracked, lists);
+        setIsGoal(false);
         itemPage.addItem(this);
-        isGoal = false;
     }
 
     /**
@@ -39,17 +39,17 @@ public class Habit extends ListItem{
 
         habitString += this.getName();
         habitString += ",";
-        habitString += this.isTracked;
+        habitString += this.getIsTracked();
         habitString += ",";
-        habitString += this.timeFrame;
+        habitString += this.getTimeFrame();
         habitString += ",";
-        habitString += this.maxProgress;
+        habitString += this.getMaxProgress();
         habitString += ",";
-        habitString += this.currentProgress;
+        habitString += this.getCurrentProgress();
         habitString += ",";
         habitString += this.habitTrackType;
         habitString += ",";
-        habitString += this.isGoal;
+        habitString += this.getIsGoal();
         habitString += ";";
 
         return habitString;
