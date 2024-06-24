@@ -9,6 +9,7 @@ public class ListItem {
     public int maxProgress;
     public int currentProgress;
     public Checklist assignedList;
+    public Boolean isGoal;
 
     /**
      * empty constructor

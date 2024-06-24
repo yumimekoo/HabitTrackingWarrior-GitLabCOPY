@@ -100,16 +100,9 @@ public class Checklist {
         String checklistString = "";
 
         checklistString += this.name;
-        checklistString += ", ";
+        checklistString += ",";
         checklistString += this.refreshTime;
-        checklistString += ", {";
-        for(int i = 0; i < this.listItems.size(); i++) {
-            if(i > 0){
-                checklistString += ", ";
-            }
-            checklistString += this.listItems.get(i).getName();
-        }
-        checklistString += "}";
+        checklistString += ";";
 
         return checklistString;
     }

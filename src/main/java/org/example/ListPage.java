@@ -52,23 +52,4 @@ public class ListPage {
     public ArrayList<Checklist> getLists(){
         return this.lists;
     }
-
-    /**
-     * toString method for Listpage Objects
-     * @return all checklists' toString methods
-     */
-    @Override
-    public String toString(){
-        String listsString = "";
-
-        for(Checklist checklist : lists) {
-
-            listsString += "[";
-            listsString += checklist.toString();
-            listsString += "]";
-            listsString += "\n";
-        }
-
-        return listsString;
-    }
 }
