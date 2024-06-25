@@ -2,6 +2,7 @@ package org.example;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class Main {
     //returns the given txt file as a String
@@ -22,6 +23,8 @@ public class Main {
         checklistReader(listPage, checklistData);
         listItemReader(listPage, itemPage, listItemData);
 
+        mainMenu(listPage, itemPage);
+
         // saves all data from the listPage's ArrayList into the checklist_data.txt file
         try (PrintWriter out = new PrintWriter(".\\src\\main\\java\\org\\example\\data\\Checklist_data.txt")) {
             checklistData = "";
@@ -30,9 +33,6 @@ public class Main {
             }
             out.println(checklistData);
         }
-
-        System.out.println(readFileAsString(".\\src\\main\\java\\org\\example\\data\\Checklist_data.txt"));
-
         try (PrintWriter out = new PrintWriter(".\\src\\main\\java\\org\\example\\data\\ListItem_data.txt")) {
             listItemData = "";
             for (ListItem item : itemPage.getItems()) {
@@ -40,9 +40,6 @@ public class Main {
             }
             out.println(listItemData);
         }
-
-        System.out.println(readFileAsString(".\\src\\main\\java\\org\\example\\data\\ListItem_data.txt"));
-
     }
 
     /**
@@ -113,9 +110,8 @@ public class Main {
      * @param listItemString the given String data
      * @param listPage the ListPage to look for Checklists when creating the ListItem
      * @param itemPage the ItemPage the ListItem is added to, when created
-     * @return the output ListItem
      */
-    public static ListItem stringToListItem(String listItemString, ListPage listPage, ItemPage itemPage) {
+    public static void stringToListItem(String listItemString, ListPage listPage, ItemPage itemPage) {
         String name = "";
         String tempIsTracKed = "";
         String tempTimeFrame = "";
@@ -124,12 +120,12 @@ public class Main {
         String tempTrackType = "";
         String tempIsGoal = "";
         int index = 0;
-        Boolean isTracked;
+        boolean isTracked;
         int timeFrame;
         int maxProgress;
         int currentProgress;
         int trackType;
-        Boolean isGoal;
+        boolean isGoal;
 
         for (int i = 0; i < listItemString.length(); i++) {
             index++;
@@ -191,13 +187,12 @@ public class Main {
             for (int i = 0; i < currentProgress; i++) {
                 goal.addProgress();
             }
-            return goal;
+        } else {
+            Habit habit = new Habit(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage);
+            for (int i = 0; i < currentProgress; i++) {
+                habit.addProgress();
+            }
         }
-        Habit habit = new Habit(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage);
-        for (int i = 0; i < currentProgress; i++) {
-            habit.addProgress();
-        }
-        return habit;
     }
 
     /**
@@ -220,6 +215,161 @@ public class Main {
          converted += (int)(((int)string.charAt(i) - 48) * Math.pow(10, string.length() - 1 - i));
         }
         return converted;
+    }
+
+    public static void showListPage(ListPage listPage, ItemPage itemPage) {
+        System.out.println();
+        System.out.println("L-I-S-T P-A-G-E");
+        System.out.println();
+        for(int i = 0; i < listPage.getLists().size(); i++) {
+            System.out.print(i + 1);
+            System.out.print(". ");
+            System.out.println(listPage.getChecklist(i).getName());
+        }
+        System.out.println();
+
+        Scanner inputGetter = new Scanner(System.in);
+        boolean ListAvailable = false;
+        int index = 0;
+
+        System.out.println("what do you want to view?");
+        System.out.println("- 'main menu'");
+        System.out.println("- 'items'");
+        System.out.println();
+        System.out.println("input here: ");
+
+        String input = inputGetter.nextLine();
+
+        for (int i = 0; i < listPage.getSize(); i++) {
+            if (listPage.getChecklist(i).getName().equals(input)) {
+                index = i;
+                ListAvailable = true;
+                break;
+            }
+        }
+
+        if(input.equals("main menu")){
+            mainMenu(listPage, itemPage);
+        } else if (input.equals("items")) {
+            showItemPage(listPage, itemPage);
+        } else if (ListAvailable) {
+            showChecklist(listPage, itemPage, listPage.getChecklist(index));
+        } else {
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            showListPage(listPage, itemPage);
+        }
+    }
+
+    public static void showItemPage(ListPage listPage, ItemPage itemPage) {
+        System.out.println();
+        System.out.println("I-T-E-M  P-A-G-E");
+        System.out.println();
+        System.out.println("Goals:");
+        System.out.println();
+        int index = 1;
+        for(int i = 0; i < itemPage.getItems().size(); i++) {
+            if (itemPage.getItem(i).getIsGoal()) {
+                System.out.print(index);
+                System.out.print(". ");
+                System.out.println(itemPage.getItem(i).getName());
+                index++;
+            }
+        }
+        System.out.println();
+        System.out.println("Habits:");
+        System.out.println();
+        index = 1;
+        for(int i = 0; i < itemPage.getItems().size(); i++) {
+            if (!itemPage.getItem(i).getIsGoal()) {
+                System.out.print(index);
+                System.out.print(". ");
+                System.out.println(itemPage.getItem(i).getName());
+                index++;
+            }
+        }
+
+        Scanner inputGetter = new Scanner(System.in);
+        System.out.println("what do you want to view?");
+        System.out.println("- 'main menu'");
+        System.out.println("- 'checklists'");
+        System.out.println();
+        System.out.println("input here: ");
+        String input = inputGetter.nextLine();
+
+        if(input.equals("main menu")){
+            mainMenu(listPage, itemPage);
+        } else if (input.equals("checklists")) {
+            showListPage(listPage, itemPage);
+        } else {
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            showItemPage(listPage, itemPage);
+        }
+    }
+
+    public static void showChecklist(ListPage listPage, ItemPage itemPage, Checklist checklist) {
+        Scanner inputGetter = new Scanner(System.in);
+        System.out.println();
+        System.out.println(checklist.getName());
+        for (int i = 0; i < checklist.getList().size(); i++) {
+            System.out.print("- ");
+            System.out.print(checklist.getList().get(i).getName());
+            int crossedOf = checklist.getList().get(i).getCurrentProgress();
+            for (int j = 0; j < checklist.getList().get(i).getMaxProgress(); j++) {
+                if (crossedOf > 0) {
+                    System.out.print(" [X]");
+                } else {
+                    System.out.print(" [ ]");
+                }
+                crossedOf--;
+            }
+            System.out.println();
+        }
+        System.out.println();
+
+
+        System.out.println("what do you want to do?");
+        System.out.println("- 'main menu'");
+        System.out.println("- 'back to lists'");
+        System.out.println();
+        System.out.println("input here: ");
+
+        String input = inputGetter.nextLine();
+
+        if(input.equals("main menu")){
+            mainMenu(listPage, itemPage);
+        } else if (input.equals("back to lists")) {
+            showListPage(listPage, itemPage);
+        } else {
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            showChecklist(listPage, itemPage, checklist);
+        }
+    }
+
+    public static void showListItem(ListPage listPage, ItemPage itemPage, String itemName) {
+
+    }
+
+    public static void mainMenu(ListPage listPage, ItemPage itemPage){
+        Scanner inputGetter = new Scanner(System.in);
+        System.out.println("M-A-I-N M-E-N-U");
+        System.out.println();
+        System.out.println("what do you want to view?");
+        System.out.println("- 'checklists'");
+        System.out.println("- 'items'");
+        System.out.println("- 'exit'");
+        System.out.println();
+        System.out.println("input here: ");
+
+        String input = inputGetter.nextLine();
+
+        if(input.equals("checklists")){
+            showListPage(listPage, itemPage);
+        } else if (input.equals("items")) {
+            showItemPage(listPage, itemPage);
+        } else if (!input.equals("exit")){
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            mainMenu(listPage, itemPage);
+        }
     }
 }
 
