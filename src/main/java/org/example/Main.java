@@ -229,12 +229,13 @@ public class Main {
         System.out.println();
 
         Scanner inputGetter = new Scanner(System.in);
-        boolean ListAvailable = false;
+        boolean listAvailable = false;
         int index = 0;
 
         System.out.println("what do you want to view?");
         System.out.println("- 'main menu'");
         System.out.println("- 'items'");
+        System.out.println("- '<checklist name>'");
         System.out.println();
         System.out.println("input here: ");
 
@@ -243,7 +244,7 @@ public class Main {
         for (int i = 0; i < listPage.getSize(); i++) {
             if (listPage.getChecklist(i).getName().equals(input)) {
                 index = i;
-                ListAvailable = true;
+                listAvailable = true;
                 break;
             }
         }
@@ -252,7 +253,7 @@ public class Main {
             mainMenu(listPage, itemPage);
         } else if (input.equals("items")) {
             showItemPage(listPage, itemPage);
-        } else if (ListAvailable) {
+        } else if (listAvailable) {
             showChecklist(listPage, itemPage, listPage.getChecklist(index));
         } else {
             System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
@@ -288,18 +289,31 @@ public class Main {
             }
         }
 
+        boolean itemAvailable = false;
+        index = 0;
         Scanner inputGetter = new Scanner(System.in);
         System.out.println("what do you want to view?");
         System.out.println("- 'main menu'");
         System.out.println("- 'checklists'");
+        System.out.println("- '<item name>'");
         System.out.println();
         System.out.println("input here: ");
         String input = inputGetter.nextLine();
+
+        for (int i = 0; i < itemPage.getItems().size(); i++) {
+            if (itemPage.getItem(i).getName().equals(input)) {
+                index = i;
+                itemAvailable = true;
+                break;
+            }
+        }
 
         if(input.equals("main menu")){
             mainMenu(listPage, itemPage);
         } else if (input.equals("checklists")) {
             showListPage(listPage, itemPage);
+        } else if (itemAvailable) {
+            showListItem(listPage, itemPage, itemPage.getItem(index));
         } else {
             System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
             showItemPage(listPage, itemPage);
@@ -307,7 +321,6 @@ public class Main {
     }
 
     public static void showChecklist(ListPage listPage, ItemPage itemPage, Checklist checklist) {
-        Scanner inputGetter = new Scanner(System.in);
         System.out.println();
         System.out.println(checklist.getName());
         for (int i = 0; i < checklist.getList().size(); i++) {
@@ -326,27 +339,90 @@ public class Main {
         }
         System.out.println();
 
+        boolean itemAvailable = false;
+        int index = 0;
 
+        Scanner inputGetter = new Scanner(System.in);
         System.out.println("what do you want to do?");
-        System.out.println("- 'main menu'");
         System.out.println("- 'back to lists'");
+        System.out.println("- '<item name>'");
+        System.out.println("- 'main menu'");
         System.out.println();
         System.out.println("input here: ");
-
         String input = inputGetter.nextLine();
+
+        for (int i = 0; i < itemPage.getItems().size(); i++) {
+            if (itemPage.getItem(i).getName().equals(input)) {
+                index = i;
+                itemAvailable = true;
+                break;
+            }
+        }
 
         if(input.equals("main menu")){
             mainMenu(listPage, itemPage);
         } else if (input.equals("back to lists")) {
             showListPage(listPage, itemPage);
+        } else if (itemAvailable) {
+            showListItem(listPage, itemPage, itemPage.getItem(index));
         } else {
             System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
             showChecklist(listPage, itemPage, checklist);
         }
     }
 
-    public static void showListItem(ListPage listPage, ItemPage itemPage, String itemName) {
+    public static void showListItem(ListPage listPage, ItemPage itemPage, ListItem listItem) {
+        System.out.println();
+        System.out.print(listItem.getName());
+        if (listItem.getIsGoal()) {
+            System.out.println(" (Goal)");
+        } else {
+            System.out.println(" (Habit)");
+        }
+        System.out.println();
+        System.out.print("progress:");
+        int crossedOf = listItem.getCurrentProgress();
+        for (int i = 0; i < listItem.getMaxProgress(); i++) {
+            if (crossedOf > 0) {
+                System.out.print(" [X]");
+            } else {
+                System.out.print(" [ ]");
+            }
+            crossedOf--;
+        }
+        System.out.println();
+        if(listItem.getIsTracked()){
+            System.out.println("is being tracked");
+            System.out.print("assigned list: ");
+            System.out.println(listItem.getAssignedList().getName());
+        } else {
+            System.out.println("is not being tracked");
+        }
+        System.out.println();
 
+        Scanner inputGetter = new Scanner(System.in);
+        System.out.println("what do you want to do?");
+        System.out.println("- 'go to checklist'");
+        System.out.println("- 'checklists'");
+        System.out.println("- 'items'");
+        System.out.println("- 'main menu'");
+        System.out.println();
+        System.out.println("input here: ");
+
+        String input = inputGetter.nextLine();
+
+        if(input.equals("checklists")){
+            showListPage(listPage, itemPage);
+        } else if (input.equals("items")) {
+            showItemPage(listPage, itemPage);
+        } else if (input.equals("go to checklist")) {
+            showChecklist(listPage, itemPage, listItem.getAssignedList());
+        } else if (input.equals("main menu")){
+            mainMenu(listPage, itemPage);
+        } else {
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            showListItem(listPage, itemPage, listItem);
+        }
     }
 
     public static void mainMenu(ListPage listPage, ItemPage itemPage){
