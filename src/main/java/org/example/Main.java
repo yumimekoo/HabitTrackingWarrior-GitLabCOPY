@@ -228,7 +228,6 @@ public class Main {
         }
         System.out.println();
 
-        Scanner inputGetter = new Scanner(System.in);
         boolean listAvailable = false;
         int index = 0;
 
@@ -239,7 +238,7 @@ public class Main {
         System.out.println();
         System.out.println("input here: ");
 
-        String input = inputGetter.nextLine();
+        String input = getUserInput();
 
         for (int i = 0; i < listPage.getSize(); i++) {
             if (listPage.getChecklist(i).getName().equals(input)) {
@@ -291,14 +290,15 @@ public class Main {
 
         boolean itemAvailable = false;
         index = 0;
-        Scanner inputGetter = new Scanner(System.in);
         System.out.println("what do you want to view?");
         System.out.println("- 'main menu'");
         System.out.println("- 'checklists'");
         System.out.println("- '<item name>'");
+        System.out.println("- 'create item'");
+        System.out.println("- 'delete item'");
         System.out.println();
         System.out.println("input here: ");
-        String input = inputGetter.nextLine();
+        String input = getUserInput();
 
         for (int i = 0; i < itemPage.getItems().size(); i++) {
             if (itemPage.getItem(i).getName().equals(input)) {
@@ -312,6 +312,12 @@ public class Main {
             mainMenu(listPage, itemPage);
         } else if (input.equals("checklists")) {
             showListPage(listPage, itemPage);
+        } else if (input.equals("create item")) {
+            createItemType(listPage, itemPage);
+        } else if (input.equals("delete item")) {
+            System.out.println("what item do you want to delete?");
+            deleteItem(itemPage, getUserInput());
+            showItemPage(listPage, itemPage);
         } else if (itemAvailable) {
             showListItem(listPage, itemPage, itemPage.getItem(index));
         } else {
@@ -342,14 +348,13 @@ public class Main {
         boolean itemAvailable = false;
         int index = 0;
 
-        Scanner inputGetter = new Scanner(System.in);
         System.out.println("what do you want to do?");
         System.out.println("- 'back to lists'");
         System.out.println("- '<item name>'");
         System.out.println("- 'main menu'");
         System.out.println();
         System.out.println("input here: ");
-        String input = inputGetter.nextLine();
+        String input = getUserInput();
 
         for (int i = 0; i < itemPage.getItems().size(); i++) {
             if (itemPage.getItem(i).getName().equals(input)) {
@@ -394,39 +399,44 @@ public class Main {
         if(listItem.getIsTracked()){
             System.out.println("is being tracked");
             System.out.print("assigned list: ");
-            System.out.println(listItem.getAssignedList().getName());
+            if (listItem.getAssignedList() != null) {
+                System.out.println(listItem.getAssignedList().getName());
+            } else {
+                System.out.println("not tracked on any list");
+            }
         } else {
             System.out.println("is not being tracked");
         }
         System.out.println();
 
-        Scanner inputGetter = new Scanner(System.in);
         System.out.println("what do you want to do?");
         System.out.println("- 'go to checklist'");
         System.out.println("- 'checklists'");
         System.out.println("- 'items'");
         System.out.println("- 'main menu'");
+        System.out.println("- 'delete this item'");
         System.out.println();
         System.out.println("input here: ");
 
-        String input = inputGetter.nextLine();
+        String input = getUserInput();
 
-        if(input.equals("checklists")){
-            showListPage(listPage, itemPage);
-        } else if (input.equals("items")) {
-            showItemPage(listPage, itemPage);
-        } else if (input.equals("go to checklist")) {
-            showChecklist(listPage, itemPage, listItem.getAssignedList());
-        } else if (input.equals("main menu")){
-            mainMenu(listPage, itemPage);
-        } else {
-            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-            showListItem(listPage, itemPage, listItem);
+        switch (input) {
+            case "checklists" -> showListPage(listPage, itemPage);
+            case "items" -> showItemPage(listPage, itemPage);
+            case "go to checklist" -> showChecklist(listPage, itemPage, listItem.getAssignedList());
+            case "main menu" -> mainMenu(listPage, itemPage);
+            case "delete this item" -> {
+                deleteItem(itemPage, listItem.getName());
+                showItemPage(listPage, itemPage);
+            }
+            default -> {
+                System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+                showListItem(listPage, itemPage, listItem);
+            }
         }
     }
 
     public static void mainMenu(ListPage listPage, ItemPage itemPage){
-        Scanner inputGetter = new Scanner(System.in);
         System.out.println("M-A-I-N M-E-N-U");
         System.out.println();
         System.out.println("what do you want to view?");
@@ -436,7 +446,7 @@ public class Main {
         System.out.println();
         System.out.println("input here: ");
 
-        String input = inputGetter.nextLine();
+        String input = getUserInput();
 
         if(input.equals("checklists")){
             showListPage(listPage, itemPage);
@@ -447,5 +457,131 @@ public class Main {
             mainMenu(listPage, itemPage);
         }
     }
+
+    public static void createItemType(ListPage listPage, ItemPage itemPage) {
+        System.out.println();
+
+        System.out.println("do you want to create a goal or a habit?");
+        String tempIsGoal = getUserInput();
+        if (!tempIsGoal.equals("goal") & !tempIsGoal.equals("habit")) {
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            createItemType(listPage, itemPage);
+        }
+        boolean isGoal = tempIsGoal.equals("goal");
+        System.out.println();
+        createItemName(listPage, itemPage, isGoal);
+    }
+
+    public static void createItemName(ListPage listPage, ItemPage itemPage, boolean isGoal) {
+        System.out.println();
+        System.out.print("name your ");
+        if (isGoal) {
+            System.out.println("goal:");
+        } else {
+            System.out.println("habit:");
+        }
+        String listItemName = getUserInput();
+        createItemTimeFrame(listPage, itemPage, isGoal, listItemName);
+    }
+
+    public static void createItemTimeFrame(ListPage listPage, ItemPage itemPage, boolean isGoal, String name) {
+        System.out.println();
+        System.out.print("what time frame do you want your ");
+        if (isGoal) {
+            System.out.print("goal");
+        } else {
+            System.out.print("habit");
+        }
+        System.out.println(" to be tracked in");
+
+        int timeFrame = stringToInt(getUserInput());
+
+        if (timeFrame < 0) {
+            System.out.println("--- TIME FRAME NEEDS TO BE POSITIVE ---");
+            createItemTimeFrame(listPage, itemPage, isGoal, name);
+        } else if (timeFrame < 1) {
+            System.out.println("--- TRACKING IS TURNED OFF ---");
+            createItemMaxProgress(listPage, itemPage, isGoal, name, timeFrame, false);
+        } else if (timeFrame != 7 & timeFrame != 1) {
+            System.out.println("--- ONLY DAILY AND WEEKLY LISTING IS AVAILABLE RIGHT NOW ---");
+            createItemTimeFrame(listPage, itemPage, isGoal, name);
+        } else {
+            createItemMaxProgress(listPage, itemPage, isGoal, name, timeFrame, true);
+        }
+
+    }
+
+    public static void createItemMaxProgress(ListPage listPage, ItemPage itemPage, boolean isGoal, String name, int timeFrame, boolean isTracked) {
+        System.out.println();
+        System.out.print("your ideal progress in this time frame:");
+
+        int maxProgress = stringToInt(getUserInput());
+
+        if (maxProgress < 0) {
+            System.out.println("--- CAN NOT BE NEGATIVE ---");
+            createItemMaxProgress(listPage, itemPage, isGoal, name, timeFrame, isTracked);
+        } if (maxProgress == 0) {
+            if (isTracked) {
+                if (isGoal) {
+                    System.out.println("--- MAX PROGRESS NEEDS TO BE GREATER THAN 0, IF THE GOAL IS TRACKED ON A LIST ---");
+                    createItemMaxProgress(listPage, itemPage, true, name, timeFrame, true);
+                } else {
+                    System.out.println("--- MAX PROGRESS NEEDS TO BE GREATER THAN 0, IF THE HABIT IS TRACKED ON A LIST ---");
+                    createItemMaxProgress(listPage, itemPage, false, name, timeFrame, true);
+                }
+            } else {
+                if (isGoal) {
+                    System.out.println("goal has been created");
+                    Goal goal = new Goal(name, timeFrame, maxProgress, 0, false, listPage.getLists(), itemPage);
+                    showItemPage(listPage, itemPage);
+                } else {
+                    System.out.println("habit has been created");
+                    Habit habit = new Habit(name, timeFrame, maxProgress, 0, false, listPage.getLists(), itemPage);
+                    showItemPage(listPage, itemPage);
+                }
+            }
+        } else {
+            if (isGoal) {
+                System.out.println("goal has been created");
+                Goal goal = new Goal(name, timeFrame, maxProgress, 0, false, listPage.getLists(), itemPage);
+                showListItem(listPage, itemPage, goal);
+            } else {
+                System.out.println("habit has been created");
+                Habit habit = new Habit(name, timeFrame, maxProgress, 0, false, listPage.getLists(), itemPage);
+                showListItem(listPage, itemPage, habit);
+            }
+        }
+    }
+
+    // deleteItem still doesn't work properly:
+    // resetting assigned list works (can now also view item details that are not assigned to a list properly)
+    // removing item from assigned list and item page is still erroneous
+    // -> for now deleting an item only sets its own assigned list value to 0, but it still shows on both the checklist and the list page
+    public static void deleteItem(ItemPage itemPage, String name) {
+        boolean deleted = false;
+        for (ListItem item : itemPage.getItems()) {
+            if (item.getName().equals(name)) {
+                //item.getAssignedList().removeListItem(item);
+                item.resetAssignedList();
+                /* for (int i = 0; i < itemPage.getItems().size(); i++) {
+                    if (itemPage.getItem(i) == item) {
+                        itemPage.removeItem(i);
+                    }
+                } */
+                deleted = true;
+            }
+        }
+        if (deleted) {
+            System.out.println("--- SUCCESSFULLY DELETED ---");
+        } else {
+            System.out.println("--- INVALID NAME, NO ITEM FOUND ---");
+        }
+    }
+
+    public static String getUserInput() {
+        Scanner inputGetter = new Scanner(System.in);
+        return inputGetter.nextLine();
+    }
+
 }
 

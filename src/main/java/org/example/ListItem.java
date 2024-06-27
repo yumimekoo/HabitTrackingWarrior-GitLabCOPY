@@ -18,13 +18,6 @@ public class ListItem {
     }
 
     /**
-     * deletes a list item (stub)
-     */
-    private void deleteItem() {
-
-    }
-
-    /**
      * sets the time frame of the list item
      * @param timeFrame is the new time frame
      */
@@ -140,7 +133,6 @@ public class ListItem {
      * "resets" the assigned list, sets the value tu null and removes the list item from the Checklist's listItems Array
      */
     public void resetAssignedList(){
-        this.assignedList.removeListItem(this);
         this.assignedList = null;
     }
 

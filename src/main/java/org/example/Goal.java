@@ -11,7 +11,7 @@ public class Goal extends ListItem{
      * @param maxProgress how often you have to check off the goal to reach the required amount
      * @param goalTrackType what kind of tracking is being used (e.g. checkbox/percentage bar/etc.)
      */
-    public Goal (String name, int timeFrame, int maxProgress, int goalTrackType, Boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage) {
+    public Goal (String name, int timeFrame, int maxProgress, int goalTrackType, boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage) {
         this.setName(name);
         this.setTimeFrame(timeFrame);
         this.setMaxProgress(maxProgress);

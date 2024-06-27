@@ -63,8 +63,12 @@ public class Checklist {
      * @param item the list item to be removed
      */
     public void removeListItem(ListItem item){
-        this.listItems.remove(item);
-        item.resetAssignedList();
+        for (int i = 0; i < this.getList().size(); i++) {
+            if (this.getItem(i) == item) {
+                this.getList().remove(i);
+                break;
+            }
+        }
     }
 
     /**
@@ -93,6 +97,10 @@ public class Checklist {
         if (0 < item.getCurrentProgress()) {
             item.reduceProgress();
         }
+    }
+
+    public ListItem getItem(int index) {
+        return this.listItems.get(index);
     }
 
     /**

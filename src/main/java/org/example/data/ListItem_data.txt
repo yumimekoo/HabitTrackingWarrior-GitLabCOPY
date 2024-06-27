@@ -1,1 +1,1 @@
-drink less coffee,true,1,2,0,0,false;work on software engineering project,true,1,1,0,0,true;water plants,true,1,1,0,0,true;
+drink less coffee,true,1,2,0,0,false;work on software engineering project,true,1,1,0,0,true;water plants,true,1,1,0,0,true;delete me,true,1,1,0,0,true;
