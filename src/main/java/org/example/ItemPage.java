@@ -1,9 +1,10 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ItemPage {
-    ArrayList<ListItem> items;
+    private ArrayList<ListItem> items;
 
     /**
      * Constructor for ItemPage Objects
@@ -28,12 +29,22 @@ public class ItemPage {
         this.items.add(listItems);
     }
 
-    /**
-     * removes a ListItem from the ArrayList
-     * @param index the index of the ListItem that's removed
-     */
+
     public void removeItem(int index) {
-        this.items.remove(index);
+        this.getItems().remove(index);
+    }
+
+    public int getItemIndex(ListItem listItem) {
+        int index = 0;
+
+        for (int i = 0; i < this.getItems().size(); i++) {
+            if (this.getItem(i) == listItem) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
     }
 
     /**

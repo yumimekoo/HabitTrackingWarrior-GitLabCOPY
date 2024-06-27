@@ -554,24 +554,22 @@ public class Main {
     }
 
     // deleteItem still doesn't work properly:
-    // resetting assigned list works (can now also view item details that are not assigned to a list properly)
-    // removing item from assigned list and item page is still erroneous
-    // -> for now deleting an item only sets its own assigned list value to 0, but it still shows on both the checklist and the list page
+    // resetting assigned list and removing it from the checklist works (can now also view item details that are not assigned to a list properly)
+    // removing item from item page is still erroneous
+    // -> for now deleting an item still leaves it on the item page
     public static void deleteItem(ItemPage itemPage, String name) {
         boolean deleted = false;
+        int itemIndex = 0;
         for (ListItem item : itemPage.getItems()) {
             if (item.getName().equals(name)) {
-                //item.getAssignedList().removeListItem(item);
-                item.resetAssignedList();
-                /* for (int i = 0; i < itemPage.getItems().size(); i++) {
-                    if (itemPage.getItem(i) == item) {
-                        itemPage.removeItem(i);
-                    }
-                } */
+                item.getAssignedList().removeListItem(item); // ok
+                item.resetAssignedList(); // ok
+                itemIndex = itemPage.getItemIndex(item);
                 deleted = true;
             }
         }
         if (deleted) {
+            itemPage.removeItem(itemIndex);
             System.out.println("--- SUCCESSFULLY DELETED ---");
         } else {
             System.out.println("--- INVALID NAME, NO ITEM FOUND ---");
