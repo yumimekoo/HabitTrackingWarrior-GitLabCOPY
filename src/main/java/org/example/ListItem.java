@@ -49,6 +49,10 @@ public class ListItem {
         }
     }
 
+    public void removeTracking() {
+        this.isTracked = false;
+    }
+
     public Boolean getIsTracked(){
         return this.isTracked;
     }
@@ -134,6 +138,7 @@ public class ListItem {
      */
     public void resetAssignedList(){
         this.assignedList = null;
+        this.removeTracking();
     }
 
     /**

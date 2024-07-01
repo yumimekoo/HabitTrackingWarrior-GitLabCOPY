@@ -71,6 +71,10 @@ public class Checklist {
         }
     }
 
+    public int getSize() {
+        return this.getList().size();
+    }
+
     /**
      * gets the list items assigned to this checklist
      * @return returns this checklist's ArrayList
@@ -101,6 +105,12 @@ public class Checklist {
 
     public ListItem getItem(int index) {
         return this.listItems.get(index);
+    }
+
+    public void purgeList() {
+        for (int i = 0; i < this.getSize(); i++) {
+            this.getItem(i).resetAssignedList();
+        }
     }
 
     /**
