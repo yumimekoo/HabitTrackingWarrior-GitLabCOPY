@@ -1,0 +1,1 @@
+daily,1;biweek,14;

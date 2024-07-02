@@ -22,8 +22,8 @@ public class Main {
         ItemPage itemPage = new ItemPage();
 
         // reads the saved data
-        String checklistData = readFileAsString(".\\src\\main\\java\\org\\example\\data\\Checklist_data.txt");
-        String listItemData = readFileAsString(".\\src\\main\\java\\org\\example\\data\\ListItem_data.txt");
+        String checklistData = readFileAsString("./src/main/java/org/example/data/Checklist_data.txt");
+        String listItemData = readFileAsString("./src/main/java/org/example/data/ListItem_data.txt");
 
         // reassembles checklists and listItems from saved data
         checklistReader(listPage, checklistData);
@@ -32,14 +32,14 @@ public class Main {
         mainMenu(listPage, itemPage);
 
         // saves all data from the listPage's ArrayList into the checklist_data.txt file
-        try (PrintWriter out = new PrintWriter(".\\src\\main\\java\\org\\example\\data\\Checklist_data.txt")) {
+        try (PrintWriter out = new PrintWriter("./src/main/java/org/example/data/Checklist_data.txt")) {
             checklistData = "";
             for (Checklist list : listPage.getLists()) {
                 checklistData += list.toString();
             }
             out.println(checklistData);
         }
-        try (PrintWriter out = new PrintWriter(".\\src\\main\\java\\org\\example\\data\\ListItem_data.txt")) {
+        try (PrintWriter out = new PrintWriter("./src/main/java/org/example/data/ListItem_data.txt")) {
             listItemData = "";
             for (ListItem item : itemPage.getItems()) {
                 listItemData += item.toString();
