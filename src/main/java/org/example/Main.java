@@ -22,8 +22,8 @@ public class Main {
         ItemPage itemPage = new ItemPage();
 
         // reads the saved data
-        String checklistData = readFileAsString(".\\src\\main\\java\\org\\example\\data\\Checklist_data.txt");
-        String listItemData = readFileAsString(".\\src\\main\\java\\org\\example\\data\\ListItem_data.txt");
+        String checklistData = readFileAsString("./src/main/java/org/example/data/Checklist_data.txt");
+        String listItemData = readFileAsString("./src/main/java/org/example/data/ListItem_data.txt");
 
         // reassembles checklists and listItems from saved data
         checklistReader(listPage, checklistData);
@@ -32,14 +32,14 @@ public class Main {
         mainMenu(listPage, itemPage);
 
         // saves all data from the listPage's ArrayList into the checklist_data.txt file
-        try (PrintWriter out = new PrintWriter(".\\src\\main\\java\\org\\example\\data\\Checklist_data.txt")) {
+        try (PrintWriter out = new PrintWriter("./src/main/java/org/example/data/Checklist_data.txt")) {
             checklistData = "";
             for (Checklist list : listPage.getLists()) {
                 checklistData += list.toString();
             }
             out.println(checklistData);
         }
-        try (PrintWriter out = new PrintWriter(".\\src\\main\\java\\org\\example\\data\\ListItem_data.txt")) {
+        try (PrintWriter out = new PrintWriter("./src/main/java/org/example/data/ListItem_data.txt")) {
             listItemData = "";
             for (ListItem item : itemPage.getItems()) {
                 listItemData += item.toString();
@@ -379,6 +379,7 @@ public class Main {
         int index = 0;
 
         System.out.println("what do you want to do?");
+        System.out.println("- 'add/remove checkmark");
         System.out.println("- 'back to lists'");
         System.out.println("- '<item name>'");
         System.out.println("- 'delete this list'");
@@ -399,6 +400,42 @@ public class Main {
             mainMenu(listPage, itemPage);
         } else if (input.equals("back to lists")) {
             showListPage(listPage, itemPage);
+        }  else if (input.equals("add checkmark")) {
+            int itemIndex = 0;
+            boolean itemStatus = false;
+            System.out.println("what item do you want to update?");
+            String name = getUserInput();
+            for (int i = 0; i < checklist.getSize(); i++) {
+                if (name.equals(checklist.getItem(i).getName())) {
+                    itemIndex = i;
+                    itemStatus = true;
+                    break;
+                }
+            }
+            if (itemStatus) {
+                addCheckmark(checklist.getItem(itemIndex));
+            } else {
+                System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
+            }
+            showChecklist(listPage, itemPage, checklist);
+        }  else if (input.equals("remove checkmark")) {
+            int itemIndex = 0;
+            boolean itemStatus = false;
+            System.out.println("what item do you want to update?");
+            String name = getUserInput();
+            for (int i = 0; i < checklist.getSize(); i++) {
+                if (name.equals(checklist.getItem(i).getName())) {
+                    itemIndex = i;
+                    itemStatus = true;
+                    break;
+                }
+            }
+            if (itemStatus) {
+                removeCheckmark(checklist.getItem(itemIndex));
+            } else {
+                System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
+            }
+            showChecklist(listPage, itemPage, checklist);
         } else if (input.equals("delete this list")) {
             deleteList(listPage, checklist.getName());
             showListPage(listPage, itemPage);
@@ -450,6 +487,7 @@ public class Main {
         System.out.println();
 
         System.out.println("what do you want to do?");
+        System.out.println("- 'add/remove checkmark'");
         System.out.println("- 'go to checklist'");
         System.out.println("- 'checklists'");
         System.out.println("- 'items'");
@@ -461,6 +499,14 @@ public class Main {
         String input = getUserInput();
 
         switch (input) {
+            case "add checkmark" -> {
+                addCheckmark(listItem);
+                showListItem(listPage, itemPage, listItem);
+            }
+            case "remove checkmark" -> {
+                removeCheckmark(listItem);
+                showListItem(listPage, itemPage, listItem);
+            }
             case "checklists" -> showListPage(listPage, itemPage);
             case "items" -> showItemPage(listPage, itemPage);
             case "go to checklist" -> showChecklist(listPage, itemPage, listItem.getAssignedList());
@@ -705,6 +751,22 @@ public class Main {
             System.out.println("--- SUCCESSFULLY DELETED ---");
         } else {
             System.out.println("--- INVALID NAME, NO LIST FOUND ---");
+        }
+    }
+
+    public static void addCheckmark(ListItem listItem) {
+        if (listItem.getCurrentProgress() == listItem.getMaxProgress()) {
+            System.out.println("--- THIS ITEM'S PROGRESS IS ALREADY MAXED OUT ---");
+        } else {
+            listItem.addProgress();
+        }
+    }
+
+    public static void removeCheckmark(ListItem listItem) {
+        if (listItem.getCurrentProgress() == 0) {
+            System.out.println("--- THIS ITEM'S PROGRESS IS ALREADY 0 ---");
+        } else {
+            listItem.reduceProgress();
         }
     }
 
