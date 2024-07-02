@@ -49,10 +49,17 @@ public class ListItem {
         }
     }
 
+    /**
+     * specifically sets the isTracked value to false
+     */
     public void removeTracking() {
         this.isTracked = false;
     }
 
+    /**
+     * checks if the list item is being tracked or not
+     * @return the isTracked field
+     */
     public Boolean getIsTracked(){
         return this.isTracked;
     }

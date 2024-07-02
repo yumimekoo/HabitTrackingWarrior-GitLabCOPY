@@ -59,7 +59,7 @@ public class Checklist {
     }
 
     /**
-     * removes a list item from the checklist
+     * removes a list item from the checklist, if it exists on the checklist
      * @param item the list item to be removed
      */
     public void removeListItem(ListItem item){
@@ -71,6 +71,10 @@ public class Checklist {
         }
     }
 
+    /**
+     * gets the size of the checklist's arraylist of list items
+     * @return the length of the arraylist
+     */
     public int getSize() {
         return this.getList().size();
     }
@@ -103,10 +107,18 @@ public class Checklist {
         }
     }
 
+    /**
+     * gets a list item from the checklist's arraylist from its index on the list
+     * @param index the index of the list item
+     * @return the list item at the given index
+     */
     public ListItem getItem(int index) {
         return this.listItems.get(index);
     }
 
+    /**
+     * removes every list item on the checklist from the checklist's arraylist and sets their assigned list to null
+     */
     public void purgeList() {
         for (int i = 0; i < this.getSize(); i++) {
             this.getItem(i).resetAssignedList();

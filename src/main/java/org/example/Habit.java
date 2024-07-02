@@ -16,8 +16,8 @@ public class Habit extends ListItem{
         this.setTimeFrame(timeFrame);
         this.setMaxProgress(maxProgress);
         this.habitTrackType = habitTrackType;
-        setIsTracked(isTracked, lists);
-        setIsGoal(false);
+        this.setIsTracked(isTracked, lists);
+        this.setIsGoal(false);
         itemPage.addItem(this);
     }
 

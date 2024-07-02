@@ -6,7 +6,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    //returns the given txt file as a String
+    /**
+     * reads a txt file and saves it as a String
+     * @param fileName the name of the file to be read
+     * @return the contents of the file in a string
+     * @throws Exception file not found exception, if the file wasn't found
+     */
     public static String readFileAsString(String fileName) throws Exception {
         return new String(Files.readAllBytes(Paths.get(fileName)));
     }
@@ -218,6 +223,11 @@ public class Main {
         return converted;
     }
 
+    /**
+     * shows the list page and it's contents. then gives you a variety of options to choose from via text input
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     */
     public static void showListPage(ListPage listPage, ItemPage itemPage) {
         System.out.println();
         System.out.println("L-I-S-T P-A-G-E");
@@ -269,6 +279,11 @@ public class Main {
         }
     }
 
+    /**
+     * shows the item page and it's contents. then gives you a variety of options to choose from via text input
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     */
     public static void showItemPage(ListPage listPage, ItemPage itemPage) {
         System.out.println();
         System.out.println("I-T-E-M  P-A-G-E");
@@ -335,6 +350,12 @@ public class Main {
         }
     }
 
+    /**
+     * shows a checklist and it's contents. then gives you a variety of options to choose from via text input
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     * @param checklist the checklist that is viewed
+     */
     public static void showChecklist(ListPage listPage, ItemPage itemPage, Checklist checklist) {
         System.out.println();
         System.out.println(checklist.getName());
@@ -389,6 +410,12 @@ public class Main {
         }
     }
 
+    /**
+     * shows a list item and it's contents. then gives you a variety of options to choose from via text input
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     * @param listItem the list item that is viewed
+     */
     public static void showListItem(ListPage listPage, ItemPage itemPage, ListItem listItem) {
         System.out.println();
         System.out.print(listItem.getName());
@@ -449,6 +476,11 @@ public class Main {
         }
     }
 
+    /**
+     * the main menu of the program. gives you the option to view the list page, the item page or exit
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     */
     public static void mainMenu(ListPage listPage, ItemPage itemPage){
         System.out.println("M-A-I-N M-E-N-U");
         System.out.println();
@@ -471,6 +503,11 @@ public class Main {
         }
     }
 
+    /**
+     * initiates the creation of a new checklist.
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     */
     public static void createChecklist(ListPage listPage, ItemPage itemPage) {
         System.out.println();
         System.out.println("how do you want to name your list?");
@@ -484,6 +521,10 @@ public class Main {
         showChecklist(listPage, itemPage, checklist);
     }
 
+    /**
+     * creates a name for a new checklist or list item through user input
+     * @return the created name as a string
+     */
     public static String createName() {
         String name = getUserInput();
 
@@ -497,6 +538,10 @@ public class Main {
         return name;
     }
 
+    /**
+     * creates the refreshTime value for a new checklist through user input
+     * @return the created refreshTime as an int
+     */
     public static int createChecklistRefreshTime() {
         int refreshTime = stringToInt(getUserInput());
 
@@ -508,6 +553,11 @@ public class Main {
         return refreshTime;
     }
 
+    /**
+     * initiates the creation of a new list item.
+     * @param listPage the list page of the program
+     * @param itemPage the item page of the program
+     */
     public static void createItem(ListPage listPage, ItemPage itemPage) {
         System.out.println();
         System.out.println("do you want to create a goal or a habit?");
@@ -560,6 +610,10 @@ public class Main {
         showListItem(listPage, itemPage, item);
     }
 
+    /**
+     * creates the isGoal value for a new list item through user input
+     * @return the created isGoal as a boolean
+     */
     public static boolean createItemType() {
         String tempIsGoal = getUserInput();
         boolean isGoal;
@@ -572,6 +626,10 @@ public class Main {
         return isGoal;
     }
 
+    /**
+     * creates the timeFrame value for a new list item through user input
+     * @return the created timeFrame as an int
+     */
     public static int createItemTimeFrame() {
         int timeFrame = stringToInt(getUserInput());
 
@@ -586,6 +644,10 @@ public class Main {
         return timeFrame;
     }
 
+    /**
+     * creates the maxProgress value for a new list item through user input
+     * @return the created maxProgress as an int
+     */
     public static int createItemMaxProgress() {
         int maxProgress = stringToInt(getUserInput());
 
@@ -597,6 +659,11 @@ public class Main {
         return maxProgress;
     }
 
+    /**
+     * deletes a list item by removing it from the list page and the item page, then opens the item page
+     * @param itemPage the item page of the program
+     * @param name the list item that is deleted
+     */
     public static void deleteItem(ItemPage itemPage, String name) {
         boolean deleted = false;
         int itemIndex = 0;
@@ -604,7 +671,6 @@ public class Main {
             if (item.getName().equals(name)) {
                 if (item.getAssignedList() != null) {
                     item.getAssignedList().removeListItem(item);
-                    item.resetAssignedList();
                 }
                 itemIndex = itemPage.getItemIndex(item);
                 deleted = true;
@@ -618,6 +684,11 @@ public class Main {
         }
     }
 
+    /**
+     * deletes a checklist by removing it from the list page and removing every list item from the itself
+     * @param listPage the list page of the program
+     * @param name the checklist that is deleted
+     */
     public static void deleteList(ListPage listPage, String name) {
         boolean deleted = false;
         int listIndex = 0;
@@ -637,6 +708,10 @@ public class Main {
         }
     }
 
+    /**
+     * gets the users input with a scanner object
+     * @return the user's input as a string
+     */
     public static String getUserInput() {
         Scanner inputGetter = new Scanner(System.in);
         return inputGetter.nextLine();
