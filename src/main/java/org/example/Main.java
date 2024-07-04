@@ -259,22 +259,26 @@ public class Main {
                 break;
             }
         }
-
-        if(input.equals("main menu")){
-            mainMenu(listPage, itemPage);
-        } else if (input.equals("items")) {
-            showItemPage(listPage, itemPage);
-        } else if (input.equals("create checklist")) {
-            createChecklist(listPage, itemPage);
-        } else if (input.equals("delete checklist")) {
-            System.out.println("what list do you want to delete?");
-            deleteList(listPage, getUserInput());
-            showListPage(listPage, itemPage);
-        } else if (listAvailable) {
+        if (listAvailable) {
             showChecklist(listPage, itemPage, listPage.getChecklist(index));
-        } else {
-            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-            showListPage(listPage, itemPage);
+        } else{
+            switch (input) {
+                case "main menu" ->
+                    mainMenu(listPage, itemPage);
+                case "items" ->
+                    showItemPage(listPage, itemPage);
+                case "create checklist" ->
+                    createChecklist(listPage, itemPage);
+                case "delete checklist" -> {
+                    System.out.println("what list do you want to delete?");
+                    deleteList(listPage, getUserInput());
+                    showListPage(listPage, itemPage);
+                }
+                default -> {
+                    System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+                    showListPage(listPage, itemPage);
+                }
+            }
         }
     }
 
@@ -330,22 +334,26 @@ public class Main {
                 break;
             }
         }
-
-        if(input.equals("main menu")){
-            mainMenu(listPage, itemPage);
-        } else if (input.equals("checklists")) {
-            showListPage(listPage, itemPage);
-        } else if (input.equals("create item")) {
-            createItem(listPage, itemPage);
-        } else if (input.equals("delete item")) {
-            System.out.println("what item do you want to delete?");
-            deleteItem(itemPage, getUserInput());
-            showItemPage(listPage, itemPage);
-        } else if (itemAvailable) {
+        if (itemAvailable) {
             showListItem(listPage, itemPage, itemPage.getItem(index));
         } else {
-            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-            showItemPage(listPage, itemPage);
+            switch (input) {
+                case "main menu" ->
+                    mainMenu(listPage, itemPage);
+                case "checklists" ->
+                    showListPage(listPage, itemPage);
+                case "create item" ->
+                    createItem(listPage, itemPage);
+                case "delete item" ->{
+                    System.out.println("what item do you want to delete?");
+                    deleteItem(itemPage, getUserInput());
+                    showItemPage(listPage, itemPage);
+                }
+                default -> {
+                    System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+                    showItemPage(listPage, itemPage);
+                }
+            }
         }
     }
 
@@ -362,13 +370,28 @@ public class Main {
             System.out.print("- ");
             System.out.print(checklist.getList().get(i).getName());
             int crossedOf = checklist.getList().get(i).getCurrentProgress();
-            for (int j = 0; j < checklist.getList().get(i).getMaxProgress(); j++) {
-                if (crossedOf > 0) {
-                    System.out.print(" [X]");
-                } else {
-                    System.out.print(" [ ]");
+            switch (checklist.getList().get(i).getTrackType()) {
+                case 0 -> {
+                    for (int j = 0; j < checklist.getList().get(i).getMaxProgress(); j++) {
+                        if (crossedOf > 0) {
+                            System.out.print(" [X]");
+                        } else {
+                            System.out.print(" [ ]");
+                        }
+                        crossedOf--;
+                    }
                 }
-                crossedOf--;
+                case 2 -> {
+                    //stub2
+                }
+                case 3 -> {
+                    //stub3
+                }
+                case 4 -> {
+                    //stub4
+                }
+                default -> {
+                }
             }
             System.out.println();
         }
@@ -395,54 +418,61 @@ public class Main {
             }
         }
 
-        if(input.equals("main menu")){
-            mainMenu(listPage, itemPage);
-        } else if (input.equals("back to lists")) {
-            showListPage(listPage, itemPage);
-        }  else if (input.equals("add checkmark")) {
-            int itemIndex = 0;
-            boolean itemStatus = false;
-            System.out.println("what item do you want to update?");
-            String name = getUserInput();
-            for (int i = 0; i < checklist.getSize(); i++) {
-                if (name.equals(checklist.getItem(i).getName())) {
-                    itemIndex = i;
-                    itemStatus = true;
-                    break;
-                }
-            }
-            if (itemStatus) {
-                addCheckmark(checklist.getItem(itemIndex));
-            } else {
-                System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
-            }
-            showChecklist(listPage, itemPage, checklist);
-        }  else if (input.equals("remove checkmark")) {
-            int itemIndex = 0;
-            boolean itemStatus = false;
-            System.out.println("what item do you want to update?");
-            String name = getUserInput();
-            for (int i = 0; i < checklist.getSize(); i++) {
-                if (name.equals(checklist.getItem(i).getName())) {
-                    itemIndex = i;
-                    itemStatus = true;
-                    break;
-                }
-            }
-            if (itemStatus) {
-                removeCheckmark(checklist.getItem(itemIndex));
-            } else {
-                System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
-            }
-            showChecklist(listPage, itemPage, checklist);
-        } else if (input.equals("delete this list")) {
-            deleteList(listPage, checklist.getName());
-            showListPage(listPage, itemPage);
-        } else if (itemAvailable) {
+        if (itemAvailable) {
             showListItem(listPage, itemPage, itemPage.getItem(index));
         } else {
-            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-            showChecklist(listPage, itemPage, checklist);
+            switch (input) {
+                case "main menu" ->
+                    mainMenu(listPage, itemPage);
+                case "back to lists" ->
+                    showListPage(listPage, itemPage);
+                case "add checkmark" -> {
+                    int itemIndex = 0;
+                    boolean itemStatus = false;
+                    System.out.println("what item do you want to update?");
+                    String name = getUserInput();
+                    for (int i = 0; i < checklist.getSize(); i++) {
+                        if (name.equals(checklist.getItem(i).getName())) {
+                            itemIndex = i;
+                            itemStatus = true;
+                            break;
+                        }
+                    }
+                    if (itemStatus) {
+                        addCheckmark(checklist.getItem(itemIndex));
+                    } else {
+                        System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
+                    }
+                    showChecklist(listPage, itemPage, checklist);
+                }
+                case "remove checkmark" -> {
+                    int itemIndex = 0;
+                    boolean itemStatus = false;
+                    System.out.println("what item do you want to update?");
+                    String name = getUserInput();
+                    for (int i = 0; i < checklist.getSize(); i++) {
+                        if (name.equals(checklist.getItem(i).getName())) {
+                            itemIndex = i;
+                            itemStatus = true;
+                            break;
+                        }
+                    }
+                    if (itemStatus) {
+                        removeCheckmark(checklist.getItem(itemIndex));
+                    } else {
+                        System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
+                    }
+                    showChecklist(listPage, itemPage, checklist);
+                }
+                case "delete this list" -> {
+                    deleteList(listPage, checklist.getName());
+                    showListPage(listPage, itemPage);
+                }
+                default -> {
+                    System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+                    showChecklist(listPage, itemPage, checklist);
+                }
+            }
         }
     }
 
@@ -538,13 +568,18 @@ public class Main {
 
         String input = getUserInput();
 
-        if(input.equals("checklists")){
-            showListPage(listPage, itemPage);
-        } else if (input.equals("items")) {
-            showItemPage(listPage, itemPage);
-        } else if (!input.equals("exit")){
-            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-            mainMenu(listPage, itemPage);
+        switch (input) {
+            case "checklists" ->
+                showListPage(listPage, itemPage);
+            case "items" ->
+                showItemPage(listPage, itemPage);
+            case "exit" -> {
+
+            }
+            default -> {
+                System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+                mainMenu(listPage, itemPage);
+            }
         }
     }
 
