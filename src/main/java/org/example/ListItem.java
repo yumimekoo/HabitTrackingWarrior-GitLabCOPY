@@ -9,6 +9,7 @@ public class ListItem {
     private int currentProgress;
     private Checklist assignedList;
     private Boolean isGoal;
+    private int trackType; //for now always zero
 
     /**
      * empty constructor
@@ -178,5 +179,39 @@ public class ListItem {
      */
     public Boolean getIsGoal() {
         return this.isGoal;
+    }
+
+    public int getTrackType(){
+        return this.trackType;
+    }
+
+    public void setTrackType(int trackType) {
+        this.trackType = trackType;
+    }
+
+    /**
+     * toString method for Goal Objects
+     * @return the ListItem's name, time frame, max/current progress, assigned Checklist, the track type and if it's tracked or not
+     */
+    @Override
+    public String toString() {
+        String goalString = "";
+
+        goalString += this.getName();
+        goalString += ",";
+        goalString += this.getIsTracked();
+        goalString += ",";
+        goalString += this.getTimeFrame();
+        goalString += ",";
+        goalString += this.getMaxProgress();
+        goalString += ",";
+        goalString += this.getCurrentProgress();
+        goalString += ",";
+        goalString += this.getTrackType();
+        goalString += ",";
+        goalString += this.getIsGoal();
+        goalString += ";";
+
+        return goalString;
     }
 }

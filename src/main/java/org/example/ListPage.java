@@ -3,7 +3,7 @@ package org.example;
 import java.util.ArrayList;
 
 public class ListPage {
-    private ArrayList<Checklist> lists;
+    private final ArrayList<Checklist> lists;
 
     /**
      * Constructor for ListPage Objects

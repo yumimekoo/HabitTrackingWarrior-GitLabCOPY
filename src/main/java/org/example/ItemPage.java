@@ -3,7 +3,7 @@ package org.example;
 import java.util.ArrayList;
 
 public class ItemPage {
-    private ArrayList<ListItem> items;
+    private final ArrayList<ListItem> items;
 
     /**
      * Constructor for ItemPage Objects
