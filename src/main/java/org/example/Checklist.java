@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Checklist {
     private String name;
     private int refreshTime;
-    private ArrayList<ListItem> listItems;
+    private final ArrayList<ListItem> listItems;
 
     /**
      * Constructor for Checklist
