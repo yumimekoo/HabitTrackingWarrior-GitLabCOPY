@@ -544,13 +544,13 @@ public class Main {
                 deleteItem(itemPage, listItem.getName());
                 showItemPage(listPage, itemPage);
             }
+
             default -> {
                 System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
                 showListItem(listPage, itemPage, listItem);
             }
         }
     }
-
     /**
      * the main menu of the program. gives you the option to view the list page, the item page or exit
      * @param listPage the list page of the program
