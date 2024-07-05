@@ -522,8 +522,6 @@ public class Main {
         System.out.println("- 'items'");
         System.out.println("- 'main menu'");
         System.out.println("- 'delete this item'");
-        System.out.println("- 'check'");
-        System.out.println("- 'uncheck'");
         System.out.println();
         System.out.println("input here: ");
 
@@ -546,34 +544,11 @@ public class Main {
                 deleteItem(itemPage, listItem.getName());
                 showItemPage(listPage, itemPage);
             }
-            case "check" -> {
-                addCheck(listItem);
-                showListItem(listPage, itemPage, listItem);
-            }
-            case "uncheck" -> {
-                removeCheck(listItem);
-                showListItem(listPage, itemPage, listItem);
-            }
 
             default -> {
                 System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
                 showListItem(listPage, itemPage, listItem);
             }
-        }
-    }
-    public static void addCheck(ListItem listItem){
-        if(listItem.getCurrentProgress()==listItem.getMaxProgress()){
-            System.out.println("--- ITEM ALREADY MAXED OUT ---");
-        } else {
-            listItem.addProgress();
-        }
-    }
-
-    public static void removeCheck(ListItem listItem){
-        if(listItem.getCurrentProgress()==0){
-            System.out.println("--- ITEM HAS NO CHECKS ---");
-        } else {
-            listItem.reduceProgress();
         }
     }
     /**
