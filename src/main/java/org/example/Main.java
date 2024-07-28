@@ -325,6 +325,7 @@ public class Main {
                 index++;
             }
         }
+        System.out.println();
 
         boolean itemAvailable = false;
         index = 0;
@@ -537,6 +538,7 @@ public class Main {
         System.out.println("- 'checklists'");
         System.out.println("- 'items'");
         System.out.println("- 'main menu'");
+        System.out.println("- 'edit this item'");
         System.out.println("- 'delete this item'");
         System.out.println();
         System.out.println("input here: ");
@@ -559,7 +561,12 @@ public class Main {
                 return "item";
             }
             case "go to checklist" -> {
-                return showChecklist(listPage, itemPage, listItem.getAssignedList(), menuKey);
+                if (listItem.getAssignedList() != null) {
+                    return showChecklist(listPage, itemPage, listItem.getAssignedList(), menuKey);
+                } else {
+                    System.out.println("--- ITEM NOT ASSIGNED TO ANY LIST ---");
+                    return showListItem(listPage, itemPage, listItem, menuKey);
+                }
             }
             case "main menu" -> {
                 return "main";
@@ -567,6 +574,10 @@ public class Main {
             case "delete this item" -> {
                 deleteItem(itemPage, listItem.getName());
                 return "item";
+            }
+            case "edit this item" -> {
+                editItem(listPage, listItem);
+                return showListItem(listPage, itemPage, listItem, menuKey);
             }
             default -> {
                 System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
@@ -651,8 +662,11 @@ public class Main {
     public static int createChecklistRefreshTime() {
         int refreshTime = stringToInt(getUserInput());
 
-        if (refreshTime > 28) {
-            System.out.println("refresh time too large");
+        if (refreshTime < 0) {
+            System.out.println("--- TIME FRAME NEEDS TO BE POSITIVE ---");
+            refreshTime = createChecklistRefreshTime();
+        } else if (refreshTime > 3 & refreshTime != 7 & refreshTime != 14) {
+            System.out.println("--- ONLY (BI-)DAILY, (BI-)WEEKLY AND NO LISTING IS AVAILABLE RIGHT NOW ---");
             refreshTime = createChecklistRefreshTime();
         }
 
@@ -763,6 +777,106 @@ public class Main {
         }
 
         return maxProgress;
+    }
+
+    public static void editItem(ListPage listPage, ListItem listItem) {
+        System.out.println();
+        System.out.println("--- EDITING ITEM ---");
+        System.out.println();
+        System.out.print("name:              ");
+        System.out.print(listItem.getName());
+        if (listItem.getIsGoal()) {
+            System.out.println("(Goal)");
+        } else {
+            System.out.println("(Habit)");
+        }
+        System.out.print("time frame (list): ");
+        System.out.print(listItem.getTimeFrame());
+        if (listItem.getAssignedList() == null) {
+            System.out.println(" (no assigned list)");
+        } else {
+            System.out.print(" (");
+            System.out.print(listItem.getAssignedList().getName());
+            System.out.println(")");
+        }
+        System.out.print("maximum progress:  ");
+        System.out.println(listItem.getMaxProgress());
+        System.out.print("track type (stub): ");
+        System.out.println(listItem.getTrackType());
+        System.out.print("tracked:           ");
+        if (listItem.getIsTracked()) {
+            System.out.println("yes");
+        } else {
+            System.out.println("no");
+        }
+        System.out.print("finished:          ");
+        if (listItem.getIsFinished()) {
+            System.out.println("yes");
+        } else {
+            System.out.println("no");
+        }
+        System.out.println();
+        System.out.println("what do you want to edit?");
+        System.out.println("name/tracked/timeframe/progress/changeItemType/finished/back");
+        String input = getUserInput();
+        System.out.println();
+        boolean goBack = false;
+
+        switch (input) {
+            case "name" -> {
+                System.out.println("new name:");
+                listItem.setName(createName());
+            }
+            case "tracked" -> {
+                if (listItem.getIsTracked()) {
+                    listItem.setIsTracked(false, listPage.getLists());
+                    System.out.println("tracking is turned off");
+                } else {
+                    listItem.setIsTracked(true, listPage.getLists());
+                    System.out.println("tracking is turned on");
+                }
+            }
+            case "timeframe" -> {
+                System.out.println("new time frame:");
+                listItem.setTimeFrame(createItemTimeFrame());
+            }
+            case "progress" -> {
+                System.out.println("new maximum progress");
+                listItem.setMaxProgress(createItemMaxProgress());
+            }
+            case "changeItemType" -> {
+                if (!listItem.getIsGoal()) {
+                    listItem.setIsGoal(true);
+                    System.out.println("this item is now a goal");
+                } else {
+                    listItem.setIsGoal(false);
+                    System.out.println("this item is now a habit");
+                }
+            }
+            case "finished" -> {
+                listItem.switchIsFinished();
+
+                if(listItem.getIsFinished()) {
+                    listItem.setIsTracked(false, listPage.getLists());
+                    System.out.println("the item is now marked as finished");
+                } else {
+                    listItem.setIsTracked(true, listPage.getLists());
+                    System.out.print("the item is now marked as not finished and added to the list '");
+                    System.out.print(listItem.getAssignedList().getName());
+                    System.out.println("'");
+                }
+            }
+            case "back" -> {
+                goBack = true;
+            }
+            default -> {
+                System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            }
+        }
+
+        if (!goBack) {
+            editItem(listPage, listItem);
+        }
     }
 
     /**

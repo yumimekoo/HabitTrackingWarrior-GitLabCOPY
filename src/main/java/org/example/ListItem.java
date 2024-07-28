@@ -10,6 +10,7 @@ public class ListItem {
     private Checklist assignedList;
     private Boolean isGoal;
     private int trackType; //for now always zero
+    private boolean isFinished = false;
 
     /**
      * empty constructor
@@ -213,5 +214,20 @@ public class ListItem {
         goalString += ";";
 
         return goalString;
+    }
+
+    /**
+     * switches the value of isFinished
+     */
+    public void switchIsFinished(){
+        this.isFinished = !isFinished;
+    }
+
+    /**
+     * getter for isFinished
+     * @return isFinished
+     */
+    public boolean getIsFinished(){
+        return this.isFinished;
     }
 }
