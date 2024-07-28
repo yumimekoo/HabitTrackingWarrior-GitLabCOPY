@@ -28,7 +28,15 @@ public class Main {
         checklistReader(listPage, checklistData);
         listItemReader(listPage, itemPage, listItemData);
 
-        mainMenu(listPage, itemPage);
+        String menuKey = "main";
+
+        while (!menuKey.equals("exit")) {
+            switch (menuKey) {
+                case "main" -> menuKey = mainMenu(listPage, itemPage, menuKey); // menuKey gets set in openMain
+                case "list" -> menuKey = showListPage(listPage, itemPage, menuKey); // menuKey gets set in openList
+                case "item" -> menuKey = showItemPage(listPage, itemPage, menuKey); // menuKey gets set in openItem
+            }
+        }
 
         // saves all data from the listPage's ArrayList into the checklist_data.txt file
         try (PrintWriter out = new PrintWriter("./src/main/java/org/example/data/Checklist_data.txt")) {
@@ -227,7 +235,7 @@ public class Main {
      * @param listPage the list page of the program
      * @param itemPage the item page of the program
      */
-    public static void showListPage(ListPage listPage, ItemPage itemPage) {
+    public static String showListPage(ListPage listPage, ItemPage itemPage, String menuKey) {
         System.out.println();
         System.out.println("L-I-S-T P-A-G-E");
         System.out.println();
@@ -260,23 +268,26 @@ public class Main {
             }
         }
         if (listAvailable) {
-            showChecklist(listPage, itemPage, listPage.getChecklist(index));
+            return showChecklist(listPage, itemPage, listPage.getChecklist(index), menuKey);
         } else{
             switch (input) {
-                case "main menu" ->
-                    mainMenu(listPage, itemPage);
-                case "items" ->
-                    showItemPage(listPage, itemPage);
-                case "create checklist" ->
-                    createChecklist(listPage, itemPage);
+                case "main menu" -> {
+                    return "main";
+                }
+                case "items" -> {
+                    return "item";
+                }
+                case "create checklist" -> {
+                    return createChecklist(listPage, itemPage, menuKey);
+                }
                 case "delete checklist" -> {
                     System.out.println("what list do you want to delete?");
                     deleteList(listPage, getUserInput());
-                    showListPage(listPage, itemPage);
+                    return showListPage(listPage, itemPage, menuKey);
                 }
                 default -> {
                     System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-                    showListPage(listPage, itemPage);
+                    return showListPage(listPage, itemPage, menuKey);
                 }
             }
         }
@@ -287,7 +298,7 @@ public class Main {
      * @param listPage the list page of the program
      * @param itemPage the item page of the program
      */
-    public static void showItemPage(ListPage listPage, ItemPage itemPage) {
+    public static String showItemPage(ListPage listPage, ItemPage itemPage, String menuKey) {
         System.out.println();
         System.out.println("I-T-E-M  P-A-G-E");
         System.out.println();
@@ -335,23 +346,26 @@ public class Main {
             }
         }
         if (itemAvailable) {
-            showListItem(listPage, itemPage, itemPage.getItem(index));
+            return showListItem(listPage, itemPage, itemPage.getItem(index), menuKey);
         } else {
             switch (input) {
-                case "main menu" ->
-                    mainMenu(listPage, itemPage);
-                case "checklists" ->
-                    showListPage(listPage, itemPage);
-                case "create item" ->
-                    createItem(listPage, itemPage);
+                case "main menu" -> {
+                    return "main";
+                }
+                case "checklists" -> {
+                    return "list";
+                }
+                case "create item" -> {
+                    return createItem(listPage, itemPage, menuKey);
+                }
                 case "delete item" ->{
                     System.out.println("what item do you want to delete?");
                     deleteItem(itemPage, getUserInput());
-                    showItemPage(listPage, itemPage);
+                    return showItemPage(listPage, itemPage, menuKey);
                 }
                 default -> {
                     System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-                    showItemPage(listPage, itemPage);
+                    return showItemPage(listPage, itemPage, menuKey);
                 }
             }
         }
@@ -363,7 +377,7 @@ public class Main {
      * @param itemPage the item page of the program
      * @param checklist the checklist that is viewed
      */
-    public static void showChecklist(ListPage listPage, ItemPage itemPage, Checklist checklist) {
+    public static String showChecklist(ListPage listPage, ItemPage itemPage, Checklist checklist, String menuKey) {
         System.out.println();
         System.out.println(checklist.getName());
         for (int i = 0; i < checklist.getList().size(); i++) {
@@ -419,13 +433,15 @@ public class Main {
         }
 
         if (itemAvailable) {
-            showListItem(listPage, itemPage, itemPage.getItem(index));
+            return showListItem(listPage, itemPage, itemPage.getItem(index), menuKey);
         } else {
             switch (input) {
-                case "main menu" ->
-                    mainMenu(listPage, itemPage);
-                case "back to lists" ->
-                    showListPage(listPage, itemPage);
+                case "main menu" -> {
+                    return "main";
+                }
+                case "back to lists" -> {
+                    return "list";
+                }
                 case "add checkmark" -> {
                     int itemIndex = 0;
                     boolean itemStatus = false;
@@ -443,7 +459,7 @@ public class Main {
                     } else {
                         System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
                     }
-                    showChecklist(listPage, itemPage, checklist);
+                    return showChecklist(listPage, itemPage, checklist, menuKey);
                 }
                 case "remove checkmark" -> {
                     int itemIndex = 0;
@@ -462,15 +478,15 @@ public class Main {
                     } else {
                         System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
                     }
-                    showChecklist(listPage, itemPage, checklist);
+                    return showChecklist(listPage, itemPage, checklist, menuKey);
                 }
                 case "delete this list" -> {
                     deleteList(listPage, checklist.getName());
-                    showListPage(listPage, itemPage);
+                    return "list";
                 }
                 default -> {
                     System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-                    showChecklist(listPage, itemPage, checklist);
+                    return showChecklist(listPage, itemPage, checklist, menuKey);
                 }
             }
         }
@@ -482,7 +498,7 @@ public class Main {
      * @param itemPage the item page of the program
      * @param listItem the list item that is viewed
      */
-    public static void showListItem(ListPage listPage, ItemPage itemPage, ListItem listItem) {
+    public static String showListItem(ListPage listPage, ItemPage itemPage, ListItem listItem, String menuKey) {
         System.out.println();
         System.out.print(listItem.getName());
         if (listItem.getIsGoal()) {
@@ -530,33 +546,41 @@ public class Main {
         switch (input) {
             case "add checkmark" -> {
                 addCheckmark(listItem);
-                showListItem(listPage, itemPage, listItem);
+                return showListItem(listPage, itemPage, listItem, menuKey);
             }
             case "remove checkmark" -> {
                 removeCheckmark(listItem);
-                showListItem(listPage, itemPage, listItem);
+                return showListItem(listPage, itemPage, listItem, menuKey);
             }
-            case "checklists" -> showListPage(listPage, itemPage);
-            case "items" -> showItemPage(listPage, itemPage);
-            case "go to checklist" -> showChecklist(listPage, itemPage, listItem.getAssignedList());
-            case "main menu" -> mainMenu(listPage, itemPage);
+            case "checklists" -> {
+                return "list";
+            }
+            case "items" -> {
+                return "item";
+            }
+            case "go to checklist" -> {
+                return showChecklist(listPage, itemPage, listItem.getAssignedList(), menuKey);
+            }
+            case "main menu" -> {
+                return "main";
+            }
             case "delete this item" -> {
                 deleteItem(itemPage, listItem.getName());
-                showItemPage(listPage, itemPage);
+                return "item";
             }
-
             default -> {
                 System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-                showListItem(listPage, itemPage, listItem);
+                return showListItem(listPage, itemPage, listItem, menuKey);
             }
         }
     }
+
     /**
      * the main menu of the program. gives you the option to view the list page, the item page or exit
      * @param listPage the list page of the program
      * @param itemPage the item page of the program
      */
-    public static void mainMenu(ListPage listPage, ItemPage itemPage){
+    public static String mainMenu(ListPage listPage, ItemPage itemPage, String menuKey){
         System.out.println("M-A-I-N M-E-N-U");
         System.out.println();
         System.out.println("what do you want to view?");
@@ -569,16 +593,18 @@ public class Main {
         String input = getUserInput();
 
         switch (input) {
-            case "checklists" ->
-                showListPage(listPage, itemPage);
-            case "items" ->
-                showItemPage(listPage, itemPage);
+            case "checklists" -> {
+                return "list";
+            }
+            case "items" -> {
+                return "item";
+            }
             case "exit" -> {
-
+                return "exit";
             }
             default -> {
                 System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
-                mainMenu(listPage, itemPage);
+                return "main";
             }
         }
     }
@@ -588,7 +614,7 @@ public class Main {
      * @param listPage the list page of the program
      * @param itemPage the item page of the program
      */
-    public static void createChecklist(ListPage listPage, ItemPage itemPage) {
+    public static String createChecklist(ListPage listPage, ItemPage itemPage, String menuKey) {
         System.out.println();
         System.out.println("how do you want to name your list?");
         String name = createName();
@@ -598,7 +624,7 @@ public class Main {
         Checklist checklist = new Checklist(name, refreshTime);
         listPage.addList(checklist);
 
-        showChecklist(listPage, itemPage, checklist);
+        return showChecklist(listPage, itemPage, checklist, menuKey);
     }
 
     /**
@@ -638,7 +664,7 @@ public class Main {
      * @param listPage the list page of the program
      * @param itemPage the item page of the program
      */
-    public static void createItem(ListPage listPage, ItemPage itemPage) {
+    public static String createItem(ListPage listPage, ItemPage itemPage, String menuKey) {
         System.out.println();
         System.out.println("do you want to create a goal or a habit?");
         boolean isGoal = createItemType();
@@ -687,7 +713,7 @@ public class Main {
             }
             System.out.print("--- YOUR HABIT HAS BEEN CREATED ---");
         }
-        showListItem(listPage, itemPage, item);
+        return showListItem(listPage, itemPage, item, menuKey);
     }
 
     /**
