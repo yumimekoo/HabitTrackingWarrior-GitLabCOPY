@@ -2,6 +2,7 @@ package org.example;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -517,18 +518,26 @@ public class Main {
             crossedOf--;
         }
         System.out.println();
-        if(listItem.getIsTracked()){
-            System.out.println("is being tracked");
-            System.out.print("assigned list: ");
-            if (listItem.getAssignedList() != null) {
-                System.out.println(listItem.getAssignedList().getName());
+
+        if (!listItem.getIsFinished()) {
+            if (listItem.getIsTracked()) {
+                System.out.println("is being tracked");
+                System.out.print("assigned list: ");
+                if (listItem.getAssignedList() != null) {
+                    System.out.println(listItem.getAssignedList().getName());
+                } else {
+                    System.out.println("not tracked on any list");
+                }
             } else {
-                System.out.println("not tracked on any list");
+                System.out.println("is not being tracked");
             }
+            System.out.println("this item is not finished");
+            System.out.println();
         } else {
-            System.out.println("is not being tracked");
+            System.out.println("this item is finished");
+            System.out.println();
+
         }
-        System.out.println();
 
         System.out.println("what do you want to do?");
         System.out.println("- 'add/remove checkmark'");
@@ -592,6 +601,34 @@ public class Main {
     public static String mainMenu(ListPage listPage, ItemPage itemPage, String menuKey){
         System.out.println("M-A-I-N M-E-N-U");
         System.out.println();
+
+        for (Checklist list : listPage.getLists()) {
+            System.out.print(list.getName());
+            System.out.print(": ");
+            double percent = 0;
+            for (ListItem item : list.getList()) {
+                if (item.getIsGoal()) {
+                    percent += (double) item.getCurrentProgress() / (double) item.getMaxProgress() * 100.0;
+                } else {
+                    percent += 100 - ((double) item.getCurrentProgress() / (double) item.getMaxProgress() * 100.0);
+                }
+            }
+            percent = percent / list.getSize();
+
+            percent = ((int)(percent*10))/10.0;
+            System.out.print(percent);
+            System.out.print("% ");
+
+            for (int i = 0; i < (int)(percent/2); i++) {
+                System.out.print("|");
+            }
+            for (int i = 0; i < 50 - (int)(percent/2); i++) {
+                System.out.print(":");
+            }
+            System.out.println();
+            System.out.println();
+        }
+
         System.out.println("what do you want to view?");
         System.out.println("- 'checklists'");
         System.out.println("- 'items'");
@@ -832,9 +869,14 @@ public class Main {
                     System.out.println("the item is now marked as finished");
                 } else {
                     listItem.setIsTracked(true, listPage.getLists());
-                    System.out.print("the item is now marked as not finished and added to the list '");
-                    System.out.print(listItem.getAssignedList().getName());
-                    System.out.println("'");
+
+                    if (listItem.getIsTracked()) {
+                        System.out.print("the item is now marked as not finished and added to the list '");
+                        System.out.print(listItem.getAssignedList().getName());
+                        System.out.println("'");
+                    } else {
+                        System.out.print("the item is now marked as not finished");
+                    }
                 }
             }
             case "back" -> {

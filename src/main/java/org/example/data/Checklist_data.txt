@@ -1,1 +1,1 @@
-dailyy,1;
+daily,1;weekly,7;bi-daily,2;bi-weekly,14;
