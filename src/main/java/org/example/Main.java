@@ -195,16 +195,9 @@ public class Main {
         trackType = stringToInt(tempTrackType);
         isGoal = stringToBoolean(tempIsGoal);
 
-        if (isGoal){
-            Goal goal = new Goal(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage);
-            for (int i = 0; i < currentProgress; i++) {
-                goal.addProgress();
-            }
-        } else {
-            Habit habit = new Habit(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage);
-            for (int i = 0; i < currentProgress; i++) {
-                habit.addProgress();
-            }
+        ListItem item = new ListItem(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage, isGoal);
+        for (int i = 0; i < currentProgress; i++) {
+            item.addProgress();
         }
     }
 
@@ -419,6 +412,7 @@ public class Main {
         System.out.println("- 'add/remove checkmark");
         System.out.println("- 'back to lists'");
         System.out.println("- '<item name>'");
+        System.out.println("- 'edit this list'");
         System.out.println("- 'delete this list'");
         System.out.println("- 'main menu'");
         System.out.println();
@@ -480,6 +474,10 @@ public class Main {
                         System.out.println("--- INVALID INPUT, ITEM NOT FOUND ON THIS LIST ---");
                     }
                     return showChecklist(listPage, itemPage, checklist, menuKey);
+                }
+                case "edit this list" -> {
+                    editList(listPage, checklist);
+                    return "list";
                 }
                 case "delete this list" -> {
                     deleteList(listPage, checklist.getName());
@@ -631,7 +629,7 @@ public class Main {
         String name = createName();
         System.out.println();
         System.out.println("how often should this list refresh");
-        int refreshTime = createChecklistRefreshTime();
+        int refreshTime = createTimeFrame();
         Checklist checklist = new Checklist(name, refreshTime);
         listPage.addList(checklist);
 
@@ -659,15 +657,15 @@ public class Main {
      * creates the refreshTime value for a new checklist through user input
      * @return the created refreshTime as an int
      */
-    public static int createChecklistRefreshTime() {
+    public static int createTimeFrame() {
         int refreshTime = stringToInt(getUserInput());
 
         if (refreshTime < 0) {
             System.out.println("--- TIME FRAME NEEDS TO BE POSITIVE ---");
-            refreshTime = createChecklistRefreshTime();
+            refreshTime = createTimeFrame();
         } else if (refreshTime > 3 & refreshTime != 7 & refreshTime != 14) {
             System.out.println("--- ONLY (BI-)DAILY, (BI-)WEEKLY AND NO LISTING IS AVAILABLE RIGHT NOW ---");
-            refreshTime = createChecklistRefreshTime();
+            refreshTime = createTimeFrame();
         }
 
         return refreshTime;
@@ -697,7 +695,7 @@ public class Main {
         } else {
             System.out.println("what time frame do you want your habit to be tracked in?");
         }
-        int timeFrame = createItemTimeFrame();
+        int timeFrame = createTimeFrame();
         boolean isTracked = timeFrame != 0;
         if (!isTracked) {
             System.out.println("--- TRACKING IS TURNED OFF ---");
@@ -711,22 +709,13 @@ public class Main {
         } else {
             maxProgress = 0;
         }
+
+        int trackType = 0; // for now always zero
+
         ListItem item;
-        if (isGoal) {
-            if (isTracked) {
-                item = new Goal(name, timeFrame, maxProgress, 0, true, listPage.getLists(), itemPage);
-            } else {
-                item = new Goal(name, timeFrame, maxProgress, 0, false, listPage.getLists(), itemPage);
-            }
-            System.out.print("--- YOUR GOAL HAS BEEN CREATED ---");
-        } else {
-            if (isTracked) {
-                item = new Habit(name, timeFrame, maxProgress, 0, true, listPage.getLists(), itemPage);
-            } else {
-                item = new Habit(name, timeFrame, maxProgress, 0, false, listPage.getLists(), itemPage);
-            }
-            System.out.print("--- YOUR HABIT HAS BEEN CREATED ---");
-        }
+
+        item = new ListItem(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage, isGoal);
+
         return showListItem(listPage, itemPage, item, menuKey);
     }
 
@@ -744,24 +733,6 @@ public class Main {
             isGoal = tempIsGoal.equals("goal");
         }
         return isGoal;
-    }
-
-    /**
-     * creates the timeFrame value for a new list item through user input
-     * @return the created timeFrame as an int
-     */
-    public static int createItemTimeFrame() {
-        int timeFrame = stringToInt(getUserInput());
-
-        if (timeFrame < 0) {
-            System.out.println("--- TIME FRAME NEEDS TO BE POSITIVE ---");
-            timeFrame = createItemTimeFrame();
-        } else if (timeFrame > 3 & timeFrame != 7 & timeFrame != 14) {
-            System.out.println("--- ONLY (BI-)DAILY, (BI-)WEEKLY AND NO LISTING IS AVAILABLE RIGHT NOW ---");
-            timeFrame = createItemTimeFrame();
-        }
-
-        return timeFrame;
     }
 
     /**
@@ -838,7 +809,7 @@ public class Main {
             }
             case "timeframe" -> {
                 System.out.println("new time frame:");
-                listItem.setTimeFrame(createItemTimeFrame());
+                listItem.setTimeFrame(createTimeFrame());
             }
             case "progress" -> {
                 System.out.println("new maximum progress");
@@ -901,6 +872,70 @@ public class Main {
             System.out.println("--- SUCCESSFULLY DELETED ---");
         } else {
             System.out.println("--- INVALID NAME, NO ITEM FOUND ---");
+        }
+    }
+
+    public static void editList(ListPage listPage, Checklist checklist) {
+        System.out.println();
+        System.out.println("--- EDITING CHECKLIST ---");
+        System.out.println();
+        System.out.print("name:       ");
+        System.out.println(checklist.getName());
+        System.out.print("time frame: ");
+        System.out.println(checklist.getTimeFrame());
+        System.out.println();
+        System.out.println("what do you want to edit?");
+        System.out.println("name/timeframe/back");
+        String input = getUserInput();
+        System.out.println();
+        boolean goBack = false;
+
+        switch (input) {
+            case "name" -> {
+                System.out.println("new name:");
+                checklist.setName(createName());
+            }
+            case "timeframe" -> {
+                System.out.println("new time frame:");
+                checklist.setTimeFrame(createTimeFrame());
+                System.out.println("dow you want to migrate all the list items?");
+                migrateListItems(checklist);
+            }
+            case "back" -> {
+                goBack = true;
+            }
+            default -> {
+                System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            }
+        }
+
+        if (!goBack) {
+            editList(listPage, checklist);
+        }
+    }
+
+    public static void migrateListItems(Checklist checklist){
+        System.out.println();
+        System.out.println("- 'yes' (change all items' time frames)");
+        System.out.println("- 'no' (keep all items' time frames and turn tracking off)");
+
+        String input = getUserInput();
+
+        switch (input) {
+            case "yes" -> {
+                for (ListItem item : checklist.getList()) {
+                    item.setTimeFrame(checklist.getTimeFrame());
+                }
+            }
+            case "no" -> {
+                for (ListItem item : checklist.getList()) {
+                    item.resetAssignedList();
+                }
+            }
+            default -> {
+                System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+                migrateListItems(checklist);
+            }
         }
     }
 

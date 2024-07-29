@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 public class Checklist {
     private String name;
-    private int refreshTime;
+    private int timeFrame;
     private final ArrayList<ListItem> listItems;
 
     /**
      * Constructor for Checklist
      * @param name the Name of the CheckList
-     * @param refreshTime the time frame in which the list refreshes
+     * @param timeFrame the time frame in which the list refreshes
      */
-    public Checklist(String name, int refreshTime) {
+    public Checklist(String name, int timeFrame) {
         this.name = name;
-        this.refreshTime = refreshTime;
+        this.timeFrame = timeFrame;
         listItems = new ArrayList<>();
     }
 
@@ -36,18 +36,18 @@ public class Checklist {
 
     /**
      * sets the refresh timer for the checklist
-     * @param refreshTime the new refresh time for the checklist
+     * @param timeFrame the new refresh time for the checklist
      */
-    public void setRefreshTime(int refreshTime) {
-        this.refreshTime = refreshTime;
+    public void setTimeFrame(int timeFrame) {
+        this.timeFrame = timeFrame;
     }
 
     /**
-     * gets the Checklists refreshTime
-     * @return the lists refreshTime
+     * gets the Checklists timeFrame
+     * @return the lists timeFrame
      */
-    public int getRefreshTime(){
-        return this.refreshTime;
+    public int getTimeFrame(){
+        return this.timeFrame;
     }
 
     /**
@@ -87,25 +87,6 @@ public class Checklist {
         return this.listItems;
     }
 
-    /**
-     * adds 1 to the currentProgress value of a given list item, if it doesn't exceed maxProgress
-     * @param item the given list item
-     */
-    public void addCheck(ListItem item) {
-        if (item.getMaxProgress() > item.getCurrentProgress()) {
-            item.addProgress();
-        }
-    }
-
-    /**
-     * removes 1 of the currentProgress value of a given list item, if it doesn't get smaller than 0
-     * @param item the given list item
-     */
-    public void removeCheck(ListItem item) {
-        if (0 < item.getCurrentProgress()) {
-            item.reduceProgress();
-        }
-    }
 
     /**
      * gets a list item from the checklist's arraylist from its index on the list
@@ -135,7 +116,7 @@ public class Checklist {
 
         checklistString += this.name;
         checklistString += ",";
-        checklistString += this.refreshTime;
+        checklistString += this.timeFrame;
         checklistString += ";";
 
         return checklistString;

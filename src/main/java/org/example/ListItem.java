@@ -13,10 +13,20 @@ public class ListItem {
     private boolean isFinished = false;
 
     /**
-     * empty constructor
+     * Constructor for a ListItem
+     * @param name name of the ListItem
+     * @param timeFrame time frame that the ListItem is tracked in
+     * @param maxProgress how often you have to check off the ListItem to reach the required amount
+     * @param trackType what kind of tracking is being used (e.g. checkbox/percentage bar/etc.)
      */
-    public ListItem(){
-
+    public ListItem (String name, int timeFrame, int maxProgress, int trackType, boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage, boolean isGoal) {
+        this.setName(name);
+        this.setTimeFrame(timeFrame);
+        this.setMaxProgress(maxProgress);
+        this.setTrackType(trackType);
+        this.setIsTracked(isTracked, lists);
+        this.setIsGoal(isGoal);
+        itemPage.addItem(this);
     }
 
     /**
@@ -74,7 +84,7 @@ public class ListItem {
      */
     public void assignListByTimeFrame(int timeFrame, ArrayList<Checklist> lists) {
         for (Checklist list : lists) {
-            if (timeFrame == list.getRefreshTime()) {
+            if (timeFrame == list.getTimeFrame()) {
                 this.setAssignedList(list);
                 break;
             }
