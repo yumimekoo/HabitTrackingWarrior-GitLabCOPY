@@ -2,8 +2,10 @@ package org.example;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Scanner;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class Main {
     /**
@@ -28,6 +30,8 @@ public class Main {
         // reassembles checklists and listItems from saved data
         checklistReader(listPage, checklistData);
         listItemReader(listPage, itemPage, listItemData);
+
+
 
         String menuKey = "main";
 
@@ -100,9 +104,14 @@ public class Main {
      */
     public static Checklist stringToChecklist(String checklistString) {
         String name = "";
-        String tempRefreshTime = "";
+        String tempTimeFrame = "";
+        String timeScale = "";
+        String tempInitYear = "";
+        String tempInitMonth = "";
+        String tempInitDay = "";
         int refresh;
         int index = 0;
+        int[] initDate;
 
         for (int i = 0; i < checklistString.length(); i++) {
             index++;
@@ -112,11 +121,43 @@ public class Main {
             name += checklistString.charAt(i);
         }
         for (int i = index; i < checklistString.length(); i++) {
-            tempRefreshTime += checklistString.charAt(i);
+            index++;
+            if (checklistString.charAt(i) == ','){
+                break;
+            }
+            tempTimeFrame += checklistString.charAt(i);
         }
-        refresh = stringToInt(tempRefreshTime);
+        for (int i = index; i < checklistString.length(); i++) {
+            index++;
+            if (checklistString.charAt(i) == ','){
+                break;
+            }
+            timeScale += checklistString.charAt(i);
+        }
+        for (int i = index; i < checklistString.length(); i++) {
+            index++;
+            if (checklistString.charAt(i) == ','){
+                break;
+            }
+            tempInitYear += checklistString.charAt(i);
+        }
+        for (int i = index; i < checklistString.length(); i++) {
+            index++;
+            if (checklistString.charAt(i) == ','){
+                break;
+            }
+            tempInitMonth += checklistString.charAt(i);
+        }
+        for (int i = index; i < checklistString.length(); i++) {
+            if (checklistString.charAt(i) == ','){
+                break;
+            }
+            tempInitDay += checklistString.charAt(i);
+        }
+        refresh = stringToInt(tempTimeFrame);
+        initDate = new int[] {stringToInt(tempInitYear), stringToInt(tempInitMonth), stringToInt(tempInitDay)};
 
-        return new Checklist(name, refresh);
+        return new Checklist(name, refresh, timeScale,initDate);
     }
 
     /**
@@ -129,10 +170,13 @@ public class Main {
         String name = "";
         String tempIsTracKed = "";
         String tempTimeFrame = "";
+        String timeScale = "";
         String tempMaxProgress = "";
         String tempCurrentProgress = "";
         String tempTrackType = "";
         String tempIsGoal = "";
+        String tempIsFinished = "";
+
         int index = 0;
         boolean isTracked;
         int timeFrame;
@@ -140,6 +184,8 @@ public class Main {
         int currentProgress;
         int trackType;
         boolean isGoal;
+        boolean isFinished;
+        int[] initDate;
 
         for (int i = 0; i < listItemString.length(); i++) {
             index++;
@@ -167,6 +213,13 @@ public class Main {
             if (listItemString.charAt(i) == ','){
                 break;
             }
+            timeScale += listItemString.charAt(i);
+        }
+        for (int i = index; i < listItemString.length(); i++) {
+            index++;
+            if (listItemString.charAt(i) == ','){
+                break;
+            }
             tempMaxProgress += listItemString.charAt(i);
         }
         for (int i = index; i < listItemString.length(); i++) {
@@ -184,19 +237,28 @@ public class Main {
             tempTrackType += listItemString.charAt(i);
         }
         for (int i = index; i < listItemString.length(); i++) {
+            index++;
             if (listItemString.charAt(i) == ','){
                 break;
             }
             tempIsGoal += listItemString.charAt(i);
         }
+        for (int i = index; i < listItemString.length(); i++) {
+            if (listItemString.charAt(i) == ','){
+                break;
+            }
+            tempIsFinished += listItemString.charAt(i);
+        }
+
         isTracked = stringToBoolean(tempIsTracKed);
         timeFrame = stringToInt(tempTimeFrame);
         maxProgress = stringToInt(tempMaxProgress);
         currentProgress = stringToInt(tempCurrentProgress);
         trackType = stringToInt(tempTrackType);
         isGoal = stringToBoolean(tempIsGoal);
+        isFinished = stringToBoolean(tempIsFinished);
 
-        ListItem item = new ListItem(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage, isGoal);
+        ListItem item = new ListItem(name, timeFrame, timeScale, maxProgress, trackType, isTracked, listPage.getLists(), itemPage, isGoal, isFinished);
         for (int i = 0; i < currentProgress; i++) {
             item.addProgress();
         }
@@ -374,7 +436,20 @@ public class Main {
      */
     public static String showChecklist(ListPage listPage, ItemPage itemPage, Checklist checklist, String menuKey) {
         System.out.println();
-        System.out.println(checklist.getName());
+        System.out.print(checklist.getName());
+        System.out.print(" (");
+        System.out.print(checklist.getInitDate()[0]);
+        System.out.print("/");
+        if (checklist.getInitDate()[1] < 10) {
+            System.out.print("0");
+        }
+        System.out.print(checklist.getInitDate()[1]);
+        System.out.print("/");
+        if (checklist.getInitDate()[2] < 10) {
+            System.out.print("0");
+        }
+        System.out.print(checklist.getInitDate()[2]);
+        System.out.println(")");
         for (int i = 0; i < checklist.getList().size(); i++) {
             System.out.print("- ");
             System.out.print(checklist.getList().get(i).getName());
@@ -663,11 +738,33 @@ public class Main {
     public static String createChecklist(ListPage listPage, ItemPage itemPage, String menuKey) {
         System.out.println();
         System.out.println("how do you want to name your list?");
-        String name = createName();
+        String name = createListName(listPage);
         System.out.println();
-        System.out.println("how often should this list refresh");
-        int refreshTime = createTimeFrame();
-        Checklist checklist = new Checklist(name, refreshTime);
+        boolean duplicate = true;
+        String timeScale = "";
+        int timeFrame = 0;
+        while (duplicate) {
+            System.out.println("what scale is this list in?");
+            System.out.println("(days/weeks/months)");
+            timeScale = createTimeScale();
+            System.out.println();
+            System.out.print("after how much ");
+            System.out.print(timeScale);
+            System.out.println(" should this refresh");
+            timeFrame = createTimeFrame();
+
+            duplicate = false;
+            for (Checklist list : listPage.getLists()) {
+                if (timeScale.equals(list.getTimeScale()) && timeFrame == list.getTimeFrame()) {
+                    System.out.println("--- THERE ALREADY EXISTS A LIST WITH THESE TIME VALUES ---");
+                    duplicate = true;
+                }
+            }
+        }
+
+
+
+        Checklist checklist = new Checklist(name, timeFrame, timeScale, getDateTime());
         listPage.addList(checklist);
 
         return showChecklist(listPage, itemPage, checklist, menuKey);
@@ -682,8 +779,28 @@ public class Main {
 
         for (int i = 0; i < name.length(); i++){
             if (name.charAt(i) == ';' || name.charAt(i) == ',') {
-                System.out.println("please refrain from using ',' and ';', when naming lists and items");
+                System.out.println("refrain from using ',' and ';', when naming lists and items");
                 name = createName();
+            }
+        }
+
+        return name;
+    }
+
+    public static String createListName(ListPage listPage) {
+        String name = getUserInput();
+
+        for (int i = 0; i < name.length(); i++){
+            if (name.charAt(i) == ';' || name.charAt(i) == ',') {
+                System.out.println("refrain from using ',' and ';', when naming lists and items");
+                name = createListName(listPage);
+            }
+        }
+
+        for (Checklist list : listPage.getLists()) {
+            if (name.equals(list.getName())) {
+                System.out.println("--- THERE ALREADY EXISTS A LIST WITH THIS NAME---");
+                name = createListName(listPage);
             }
         }
 
@@ -695,17 +812,25 @@ public class Main {
      * @return the created refreshTime as an int
      */
     public static int createTimeFrame() {
-        int refreshTime = stringToInt(getUserInput());
+        int timeFrame = stringToInt(getUserInput());
 
-        if (refreshTime < 0) {
+        if (timeFrame < 0) {
             System.out.println("--- TIME FRAME NEEDS TO BE POSITIVE ---");
-            refreshTime = createTimeFrame();
-        } else if (refreshTime > 3 & refreshTime != 7 & refreshTime != 14) {
-            System.out.println("--- ONLY (BI-)DAILY, (BI-)WEEKLY AND NO LISTING IS AVAILABLE RIGHT NOW ---");
-            refreshTime = createTimeFrame();
+            timeFrame = createTimeFrame();
         }
 
-        return refreshTime;
+        return timeFrame;
+    }
+
+    public static String createTimeScale() {
+        String timeScale = getUserInput();
+
+        if (!timeScale.equals("days") && !timeScale.equals("weeks") && !timeScale.equals("months")) {
+            System.out.println("--- NO VALID INPUT, PLEASE TRY AGAIN ---");
+            timeScale = createTimeScale();
+        }
+
+        return timeScale;
     }
 
     /**
@@ -725,6 +850,15 @@ public class Main {
             System.out.println("name your habit:");
         }
         String name = createName();
+
+        System.out.println();
+        if (isGoal) {
+            System.out.println("what scale is this goal in?");
+        } else {
+            System.out.println("what scale is this habit in?");
+        }
+        System.out.println("(days/weeks/months)");
+        String timeScale = createTimeScale();
 
         System.out.println();
         if (isGoal) {
@@ -751,7 +885,7 @@ public class Main {
 
         ListItem item;
 
-        item = new ListItem(name, timeFrame, maxProgress, trackType, isTracked, listPage.getLists(), itemPage, isGoal);
+        item = new ListItem(name, timeFrame, timeScale, maxProgress, trackType, isTracked, listPage.getLists(), itemPage, isGoal, false);
 
         return showListItem(listPage, itemPage, item, menuKey);
     }
@@ -791,15 +925,17 @@ public class Main {
         System.out.println();
         System.out.println("--- EDITING ITEM ---");
         System.out.println();
-        System.out.print("name:              ");
+        System.out.print("name:                    ");
         System.out.print(listItem.getName());
         if (listItem.getIsGoal()) {
-            System.out.println("(Goal)");
+            System.out.println(" (Goal)");
         } else {
-            System.out.println("(Habit)");
+            System.out.println(" (Habit)");
         }
-        System.out.print("time frame (list): ");
+        System.out.print("time frame/scale (list): ");
         System.out.print(listItem.getTimeFrame());
+        System.out.print("/");
+        System.out.print(listItem.getTimeScale());
         if (listItem.getAssignedList() == null) {
             System.out.println(" (no assigned list)");
         } else {
@@ -807,17 +943,17 @@ public class Main {
             System.out.print(listItem.getAssignedList().getName());
             System.out.println(")");
         }
-        System.out.print("maximum progress:  ");
+        System.out.print("maximum progress:        ");
         System.out.println(listItem.getMaxProgress());
-        System.out.print("track type (stub): ");
+        System.out.print("track type (stub):       ");
         System.out.println(listItem.getTrackType());
-        System.out.print("tracked:           ");
+        System.out.print("tracked:                 ");
         if (listItem.getIsTracked()) {
             System.out.println("yes");
         } else {
             System.out.println("no");
         }
-        System.out.print("finished:          ");
+        System.out.print("finished:                ");
         if (listItem.getIsFinished()) {
             System.out.println("yes");
         } else {
@@ -825,7 +961,7 @@ public class Main {
         }
         System.out.println();
         System.out.println("what do you want to edit?");
-        System.out.println("name/tracked/timeframe/progress/changeItemType/finished/back");
+        System.out.println("name/tracked/timeframe/timescale/progress/changeItemType/finished/back");
         String input = getUserInput();
         System.out.println();
         boolean goBack = false;
@@ -847,6 +983,14 @@ public class Main {
             case "timeframe" -> {
                 System.out.println("new time frame:");
                 listItem.setTimeFrame(createTimeFrame());
+                listItem.getAssignedList().removeListItem(listItem);
+                listItem.assignListByTime(listPage.getLists());
+            }
+            case "timescale" -> {
+                System.out.println("new time scale:");
+                listItem.setTimeScale(createTimeScale());
+                listItem.getAssignedList().removeListItem(listItem);
+                listItem.assignListByTime(listPage.getLists());
             }
             case "progress" -> {
                 System.out.println("new maximum progress");
@@ -922,12 +1066,26 @@ public class Main {
         System.out.println("--- EDITING CHECKLIST ---");
         System.out.println();
         System.out.print("name:       ");
-        System.out.println(checklist.getName());
+        System.out.print(checklist.getName());
+        System.out.print(" (");
+        System.out.print(checklist.getInitDate()[0]);
+        System.out.print("/");
+        if (checklist.getInitDate()[1] < 10) {
+            System.out.print("0");
+        }
+        System.out.print(checklist.getInitDate()[1]);
+        System.out.print("/");
+        if (checklist.getInitDate()[2] < 10) {
+            System.out.print("0");
+        }
+        System.out.print(checklist.getInitDate()[2]);
+        System.out.println(")");
         System.out.print("time frame: ");
         System.out.println(checklist.getTimeFrame());
-        System.out.println();
+        System.out.print("time scale: ");
+        System.out.println(checklist.getTimeScale());
         System.out.println("what do you want to edit?");
-        System.out.println("name/timeframe/back");
+        System.out.println("name/timeframe/timescale/back");
         String input = getUserInput();
         System.out.println();
         boolean goBack = false;
@@ -940,6 +1098,12 @@ public class Main {
             case "timeframe" -> {
                 System.out.println("new time frame:");
                 checklist.setTimeFrame(createTimeFrame());
+                System.out.println("dow you want to migrate all the list items?");
+                migrateListItems(checklist);
+            }
+            case "timescale" -> {
+                System.out.println("new time scale:");
+                checklist.setTimeScale(createTimeScale());
                 System.out.println("dow you want to migrate all the list items?");
                 migrateListItems(checklist);
             }
@@ -967,6 +1131,7 @@ public class Main {
             case "yes" -> {
                 for (ListItem item : checklist.getList()) {
                     item.setTimeFrame(checklist.getTimeFrame());
+                    item.setTimeScale(checklist.getTimeScale());
                 }
             }
             case "no" -> {
@@ -1030,5 +1195,28 @@ public class Main {
         return inputGetter.nextLine();
     }
 
+    public static int[] getDateTime() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String tempDate  = dateFormat.format(date);
+        int year = stringToInt(tempDate.substring(0,4));
+        int month = stringToInt(tempDate.substring(4,6));
+        int day = stringToInt(tempDate.substring(6,8));
+        return new int[]{year, month, day};
+    }
+
+    /*
+    public static void updateAllLists (ListPage listPage) {
+        int[] currentDate = getDateTime();
+
+        for (Checklist list : listPage.getLists()) {
+            if ()
+        }
+    }
+
+    public static void updateList (Checklist list, int[] currenDate) {
+
+    }
+    */
 }
 

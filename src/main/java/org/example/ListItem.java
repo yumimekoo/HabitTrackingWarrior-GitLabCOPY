@@ -5,12 +5,13 @@ public class ListItem {
     private String name;
     private Boolean isTracked; //this is true by default
     private int timeFrame;
+    private String timeScale;
     private int maxProgress;
     private int currentProgress;
     private Checklist assignedList;
     private Boolean isGoal;
     private int trackType; //for now always zero
-    private boolean isFinished = false;
+    private boolean isFinished;
 
     /**
      * Constructor for a ListItem
@@ -19,14 +20,16 @@ public class ListItem {
      * @param maxProgress how often you have to check off the ListItem to reach the required amount
      * @param trackType what kind of tracking is being used (e.g. checkbox/percentage bar/etc.)
      */
-    public ListItem (String name, int timeFrame, int maxProgress, int trackType, boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage, boolean isGoal) {
+    public ListItem (String name, int timeFrame, String timeScale, int maxProgress, int trackType, boolean isTracked, ArrayList<Checklist> lists, ItemPage itemPage, boolean isGoal, boolean isFinished) {
         this.setName(name);
         this.setTimeFrame(timeFrame);
+        this.setTimeScale(timeScale);
         this.setMaxProgress(maxProgress);
         this.setTrackType(trackType);
         this.setIsTracked(isTracked, lists);
         this.setIsGoal(isGoal);
         itemPage.addItem(this);
+        this.setIsFinished(isFinished);
     }
 
     /**
@@ -55,7 +58,7 @@ public class ListItem {
         this.isTracked = isTracked;
 
         if(this.isTracked) {
-            this.assignListByTimeFrame(this.timeFrame, lists);
+            this.assignListByTime(lists);
         } else if (this.assignedList != null) {
             this.resetAssignedList();
         }
@@ -79,14 +82,15 @@ public class ListItem {
     /**
      * assigns a Checklist to a ListItem based on it's timeFrame
      * if there is no Checklist that has a matching refreshTime, isTracked will be set to false
-     * @param timeFrame the time frame in which the ListItem is supposed to be tracked in
      * @param lists the ArrayList of Checklists the method uses to search for a suitable Checklist
      */
-    public void assignListByTimeFrame(int timeFrame, ArrayList<Checklist> lists) {
+    public void assignListByTime(ArrayList<Checklist> lists) {
         for (Checklist list : lists) {
-            if (timeFrame == list.getTimeFrame()) {
-                this.setAssignedList(list);
-                break;
+            if (this.getTimeScale().equals(list.getTimeScale())) {
+                if (this.getTimeFrame() == list.getTimeFrame()) {
+                    this.setAssignedList(list);
+                    break;
+                }
             }
         }
         if (this.assignedList == null) {
@@ -200,6 +204,20 @@ public class ListItem {
         this.trackType = trackType;
     }
 
+    public void refreshItem() {
+        for (int i = this.currentProgress; i > 0; i--) {
+            this.reduceProgress();
+        }
+    }
+
+    public void setTimeScale(String timeScale) {
+        this.timeScale = timeScale;
+    }
+
+    public String getTimeScale() {
+        return timeScale;
+    }
+
     /**
      * toString method for Goal Objects
      * @return the ListItem's name, time frame, max/current progress, assigned Checklist, the track type and if it's tracked or not
@@ -214,6 +232,8 @@ public class ListItem {
         goalString += ",";
         goalString += this.getTimeFrame();
         goalString += ",";
+        goalString += this.getTimeScale();
+        goalString += ",";
         goalString += this.getMaxProgress();
         goalString += ",";
         goalString += this.getCurrentProgress();
@@ -221,9 +241,15 @@ public class ListItem {
         goalString += this.getTrackType();
         goalString += ",";
         goalString += this.getIsGoal();
+        goalString += ",";
+        goalString += this.getIsFinished();
         goalString += ";";
 
         return goalString;
+    }
+
+    public void setIsFinished(boolean isFinished) {
+        this.isFinished = isFinished;
     }
 
     /**

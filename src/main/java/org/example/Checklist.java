@@ -5,17 +5,21 @@ import java.util.ArrayList;
 public class Checklist {
     private String name;
     private int timeFrame;
+    private String timeScale;
     private final ArrayList<ListItem> listItems;
+    private int[] initDate;
 
     /**
      * Constructor for Checklist
      * @param name the Name of the CheckList
      * @param timeFrame the time frame in which the list refreshes
      */
-    public Checklist(String name, int timeFrame) {
-        this.name = name;
-        this.timeFrame = timeFrame;
+    public Checklist(String name, int timeFrame, String timeScale, int[] initDate) {
+        this.setName(name);
+        this.setTimeFrame(timeFrame);
+        this.setTimeScale(timeScale);
         listItems = new ArrayList<>();
+        this.setInitDate(initDate);
     }
 
     /**
@@ -106,6 +110,28 @@ public class Checklist {
         }
     }
 
+    public void refreshList(){
+        for (ListItem item : this.getList()) {
+            item.refreshItem();
+        }
+    }
+
+    public void setInitDate(int[] initDate) {
+        this.initDate = initDate;
+    }
+
+    public int[] getInitDate() {
+        return this.initDate;
+    }
+
+    public void setTimeScale(String timeScale) {
+        this.timeScale = timeScale;
+    }
+
+    public String getTimeScale() {
+        return timeScale;
+    }
+
     /**
      * toString method for Checklist Objects
      * @return Checklists name, refresh time, and every ListItem in the listItems Array
@@ -114,9 +140,17 @@ public class Checklist {
     public String toString(){
         String checklistString = "";
 
-        checklistString += this.name;
+        checklistString += this.getName();
         checklistString += ",";
-        checklistString += this.timeFrame;
+        checklistString += this.getTimeFrame();
+        checklistString += ",";
+        checklistString += this.getTimeScale();
+        checklistString += ",";
+        checklistString += this.getInitDate()[0];
+        checklistString += ",";
+        checklistString += this.getInitDate()[1];
+        checklistString += ",";
+        checklistString += this.getInitDate()[2];
         checklistString += ";";
 
         return checklistString;

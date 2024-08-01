@@ -1,1 +1,1 @@
-drink less coffee,true,1,2,0,0,false;work on software engineering project,true,1,1,0,0,true;water plants,true,1,1,0,0,true;take walks,false,7,3,1,0,true;
+drink less coffee,true,1,days,2,0,0,false,false;work on software engineering project,true,1,days,1,0,0,true,false;water plants,true,1,days,1,0,0,true,false;take walks,false,1,weeks,3,1,0,true,false;go jogging,true,1,weeks,2,0,0,true,false;
